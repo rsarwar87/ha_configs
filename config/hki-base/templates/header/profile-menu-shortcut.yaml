@@ -1,0 +1,41 @@
+# lovelace_gen
+
+type: custom:button-card
+icon: {{ icon|default('mdi:home') }}
+name: "{{ name|default('undefined') }}" 
+label: "{{ label|default('undefined') }}"
+show_name: {{ show_name|default('true') }}
+show_label: {{ show_label|default('true') }}
+{% if confirmation is defined %}
+confirmation:
+  text: {{ confirmation|default('undefined') }}
+{% endif %}
+{% if tap_action is defined %}
+tap_action:
+  {{ tap_action|tojson }}
+{% else %}
+tap_action:
+  action: fire-dom-event
+  browser_mod:
+    service: browser_mod.sequence
+    data:
+      sequence:
+        {% for cards in sequence %}
+        - {{ cards|tojson }}
+        {% endfor %}
+{% endif %}
+styles:
+  card:
+    - box-shadow: none
+    - --ha-card-background: transparent
+    - border-style: none
+  name:
+    - color: AliceBlue
+    - font-size: 11px
+  label:
+    - color: AliceBlue
+    - font-size: 11px
+  icon:
+    - color: AliceBlue
+    - height: 25px
+    - width: 25px

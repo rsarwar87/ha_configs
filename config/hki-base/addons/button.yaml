@@ -1,0 +1,183 @@
+# lovelace_gen
+
+!include
+- '../templates/button/hki-button.yaml'
+{% if device.entity is defined %}
+- entity: {{ device.entity }}
+{% elif ((device.name is defined) or (device.icon is defined) and (device.entity is undefined)) %}
+- entity: input_boolean.empty
+{% else %}
+- entity: {{ device }}
+{% endif %}
+  {% if device.background_image is defined %}
+  background_image: {{ device.background_image }}
+  {% endif %}
+  {% if device.icon is defined %}
+  icon: {{ device.icon|tojson }}
+  {% endif %}
+  {% if device.type is defined %}
+  button_type: {{ device.type }}
+  {% elif config.type is defined %}
+  button_type: {{ config.type }}
+  {% endif %}
+  {% if device.lock is defined %}
+  lock: "{{ device.lock }}"
+  {% elif config.lock is defined %}
+  lock: "{{ config.lock }}"
+  {% endif %}
+  {% if device.line_color is defined %}
+  line_color: {{ device.line_color }}
+  {% elif config.line_color is defined %}
+  line_color: {{ config.line_color }}
+  {% endif %}
+  {% if device.graph_type is defined %}
+  graph_type: {{ device.graph_type }}
+  {% elif config.graph_type is defined %}
+  graph_type: {{ config.graph_type }}
+  {% endif %}
+  {% if device.aspect_ratio is defined %}
+  aspect_ratio: {{ device.aspect_ratio }}
+  {% elif config.aspect_ratio is defined %}
+  aspect_ratio: {{ config.aspect_ratio }}
+  {% endif %}
+  {% if device.name is defined %}
+  name: {{ device.name|tojson }}
+  {% endif %}
+  {% if device.label is defined %}
+  label: {{ device.label|tojson }}
+  {% endif %}
+  {% if device.entity_picture is defined %}
+  entity_picture: {{ device.entity_picture|tojson }}
+  {% endif %}
+  {% if device.layout is defined %}
+  layout: {{ device.layout }}
+  {% endif %}
+  {% if device.size is defined %}
+  size: {{ device.size }}
+  {% endif %}
+  {% if device.show_name is defined %}
+  show_name: {{ device.name }}
+  {% endif %}
+  {% if device.show_icon is defined %}
+  show_icon: {{ device.show_icon }}
+  {% endif %}
+  {% if device.show_state is defined %}
+  show_state: {{ device.show_state }}
+  {% elif ((config.type is defined) and (config.type == 'graph') or (device.type is defined) and (device.type == 'graph')) %}
+  show_state: false
+  {% elif ((config.type is defined) and (config.type == 'thermostat') or (device.type is defined) and (device.type == 'thermostat') or (device.type is defined) and (device.type == 'light')) %}
+  show_state: true
+  {% elif ((device.name is defined) or (device.icon is defined) and (device.entity is undefined)) %}
+  show_state: false
+  {% endif %}
+  {% if device.show_label is defined %}
+  show_label: {{ device.show_label }}
+  {% endif %}
+  {% if device.show_live_stream is defined %}
+  show_live_stream: {{ device.show_live_stream }}
+  {% endif %}
+  {% if device.show_units is defined %}
+  show_units: {{ device.show_units }}
+  {% endif %}
+  {% if device.show_entity_picture is defined %}
+  show_entity_picture: {{ device.show_entity_picture }}
+  {% endif %}
+  {% if device.show_last_changed is defined %}
+  show_last_changed: {{ device.show_last_changed }}
+  {% elif ((config.type is defined) and (config.type == 'graph') or (device.type is defined) and (device.type == 'graph') or (config.type is defined) and (config.type == 'sensor') or (device.type is defined) and (device.type == 'sensor')) %}
+  show_last_changed: true
+  {% endif %}
+  {% if device.spin is defined %}
+  spin: {{ device.spin }}
+  {% elif (('fan.' in device) or ('fan.' in device.entity) or ('switch.fan' in device) or ('switch.fan' in device.entity) or (config.type is defined) and (type == 'fan') or (device.type is defined) and (device.type == 'fan')) %}
+  spin: true
+  {% endif %}
+  {% if device.state_display is defined %}
+  state_display: {{ device.state_display|tojson }}
+  {% elif ((device.attribute is defined) and ('device.attribute' == 'state') and (device.type is defined) and (device.type == 'thermostat')) %}
+  state_display: "[[[ if (states['{{device.entity}}'].state == 'off') return `Off`; else return `${states['{{device.entity}}'].state}` ]]]"
+  {% elif ((device.type is defined) and (device.type == 'thermostat') or ('climate.' in device.entity)) %}
+  state_display: "[[[ if (states['{{device.entity}}'].state == 'off') return `Off`; else return `${states['{{device.entity}}'].attributes.hvac_action}` ]]]"
+  {% elif ('climate.' in device) %}
+  state_display: "[[[ if (states['{{device}}'].state == 'off') return `Off`; else return `${states['{{device}}'].attributes.hvac_action}` ]]]"
+  {% endif %}
+  {% if device.icon_color_inactive is defined %}
+  icon_color_off: {{ device.icon_color_inactive|tojson }}
+  {% endif %}
+  {% if device.icon_color_active is defined %}
+  icon_color_on: {{ device.icon_color_active|tojson }}
+  {% elif (('fan.' in device) or ('fan.' in device.entity) or ('switch.fan' in device) or ('switch.fan' in device.entity) or (device.type is defined) and (device.type == 'fan') or (config.type is defined) and (config.type == 'fan')) %}
+  icon_color_on: DodgerBlue
+  {% endif %}
+  {% if device.template is defined %}
+  template: {{ device.template }}
+  {% endif %}
+  {% if device.triggers_updates is defined %}
+  triggers_updates:
+    {% for trigger in device.triggers_updates %}
+    - {{ trigger }}
+    {% endfor %}
+  {% endif %}
+  {% if device.group_expand is defined %}
+  group_expand: {{ device.group_expand }}
+  {% endif %}
+  {% if device.units is defined %}
+  units: {{ device.units }}
+  {% endif %}
+  {% if device.styles is defined %}
+  styles: 
+    {{ device.styles|tojson }}
+  {% endif %}
+  {% if device.custom_fields is defined %}
+  custom_fields: 
+    {{ device.custom_fields|tojson }}
+  {% elif device.button_badge is defined %}
+  notification: "[[[ if (states['{{ device.button_badge }}'].state == 0) return '&nbsp'; else return `${states['{{ device.button_badge }}'].state}`; ]]]"
+  background_color: "[[[ if (states['{{ device.button_badge }}'].state == 0) return 'rgba(0,0,0,0.0)'; else return 'var(--badge-background-color)'; ]]]" 
+  {% elif (('climate.' in device) or ('climate.' in device.entity) or ('type' is defined) and ('type' == 'thermostat')) %}
+  {% if ((ambient_temperature is defined) and (device.entity is defined)) %}
+  notification: "[[[ return `${states['{{device.ambient_temperature}}'].state}°` ]]]"
+  {% elif device.entity is defined %}
+  notification: "[[[ return `${states['{{device.entity}}'].attributes.current_temperature}°` ]]]"
+  {% else %}
+  notification: "[[[ return `${states['{{device}}'].attributes.current_temperature}°` ]]]"
+  {% endif %}
+  {% endif %}
+  {% if device.confirmation is defined %}
+  confirmation: 
+    {{ device.confirmation|tojson }}
+  {% endif %}
+  {% if device.extra_styles is defined %}
+  extra_styles: 
+    {{ device.extra_styles|tojson }}
+  {% endif %}
+  {% if device.state is defined %}
+  state:
+    {% for state in device.state %}
+    - {{ state|tojson }}
+    {% endfor %}
+  {% endif %}
+  {% if device.tap_action is defined %}
+  tap_action: 
+    {{ device.tap_action|tojson }}
+  {% else %}
+  tap_action:
+    action: toggle
+    haptic: light
+  {% endif %}
+  {% if device.hold_action is defined %}
+  hold_action: 
+    {{ device.hold_action|tojson }}
+  {% else %}
+  hold_action:
+    action: more-info
+    haptic: light
+  {% endif %}
+  {% if device.double_tap_action is defined %}
+  double_tap_action:
+    {{ device.double_tap_action|tojson }}
+  {% else %}
+  double_tap_action:
+    action: more-info
+    haptic: light
+  {% endif %}

@@ -1,0 +1,9 @@
+  system:
+    title: System
+    show_in_navbar: true
+    show_in_favorites: true
+    show_in_menu: true
+    subtitle: "[[[ return `HKI 5 v.${states['sensor.hki_current_version'].state}`; ]]]"
+    icon: mdi:home-battery
+
+

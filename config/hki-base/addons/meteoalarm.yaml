@@ -1,0 +1,13 @@
+# lovelace_gen
+
+type: custom:meteoalarm-card
+card_mod:
+  class: hki
+entities: 
+  - {{ config.entity }}
+{% if config.integration is defined %}
+integration: {{ config.integration }}
+{% else %}
+integration: 'automatic'
+{% endif %}
+override_headline: false

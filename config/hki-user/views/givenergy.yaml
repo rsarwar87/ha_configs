@@ -1,0 +1,18 @@
+  # givEnergy:
+  #   title: GivEnergy
+  #   show_in_navbar: true
+  #   show_in_favorites: true
+  #   show_in_menu: true
+  #   subtitle: "tst" 
+  #   icon: mdi:solar-power-variant-outline 
+
+
+  #   addons:
+  #     button:
+  #       - title: Notifications
+  #         square: false
+  #         entities:
+  #           - switch.predbat_set_charge_window
+  #           - switch.predbat_set_soc_enable
+  #           - switch.predbat_set_reserve_hold
+  #           - switch.predbat_set_reserve_enable

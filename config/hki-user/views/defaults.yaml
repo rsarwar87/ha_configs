@@ -1,0 +1,47 @@
+
+# Default views (you can edit them!)
+
+# Home
+  home:
+    title: greeting
+    show_in_navbar: true
+    show_in_menu: false
+    icon: mdi:home
+    addons:
+      #welcome_message:
+      #  - title: hide
+      favorites:
+        - title: hide
+          columns: 3
+      entities:
+        - title: hide
+          entities:
+            - entity: sensor.hacs
+              name: HACS update
+
+# Menu
+#  menu:
+#    title: Menu
+#    show_in_navbar: true
+#    show_in_menu: false
+#    subtitle: "[[[ return `HKI 5 v.${states['sensor.hki_current_version'].state}`; ]]]"
+#    icon: mdi:apps
+#    addons:
+#      favorites:
+#        - title: Favorites
+#      menu:
+#        - title: Menu
+
+# Add your own views below this line!
+
+# Lights (example)
+  lights:
+    title: Lights
+    show_in_favorites: true
+    icon: mdi:lightbulb
+#    addons:
+#      button:
+#        - title: Living Room
+#          entities:
+#            - entity: light.ceiling
+#            - entity: light.table

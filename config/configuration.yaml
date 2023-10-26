@@ -1,0 +1,54 @@
+
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+
+homeassistant:
+  packages: !include_dir_named packages/
+
+binary_sensor: !include custom_entities/binary_sensors.yaml 
+template: !include custom_entities/templates.yaml 
+utility_meter: !include custom_entities/utility_meters.yaml 
+
+
+influxdb:
+  api_version: 2
+  ssl: false
+  host: 192.168.1.250
+  port: 8086
+  token: hR1vbtQe071Kd2UZ-JnZw9B27E9s7QoNQrxEROjo8_WqL9h_nfCKJrksvh8PiP_zFDVKHTDf7xjQ6HiffnRrGQ==
+  organization: homeassist
+  bucket: homeassist
+  exclude:
+    entity_globs: "GIvTCP*"
+  # tags:
+  #   source: HA
+  # tags_attributes:
+  #   - friendly_name
+  # default_measurement: units
+  # exclude:
+  #   entities:
+  #     - zone.home
+  #   domains:
+  #     - persistent_notification
+  #     - person
+  # include:
+  #   domains:
+  #     - sensor
+  #     - binary_sensor
+  #     - sun
+  #   entities:
+  #     - weather.home
+
+recorder:
+  auto_purge: true #currently the default
+  purge_keep_days: 10
+

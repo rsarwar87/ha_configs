@@ -1,0 +1,1125 @@
+services:
+
+  Grafana:
+
+    cap_drop:
+      - "AUDIT_CONTROL"
+      - "BLOCK_SUSPEND"
+      - "DAC_READ_SEARCH"
+      - "IPC_LOCK"
+      - "IPC_OWNER"
+      - "LEASE"
+      - "LINUX_IMMUTABLE"
+      - "MAC_ADMIN"
+      - "MAC_OVERRIDE"
+      - "NET_ADMIN"
+      - "NET_BROADCAST"
+      - "SYSLOG"
+      - "SYS_ADMIN"
+      - "SYS_BOOT"
+      - "SYS_MODULE"
+      - "SYS_NICE"
+      - "SYS_PACCT"
+      - "SYS_PTRACE"
+      - "SYS_RAWIO"
+      - "SYS_RESOURCE"
+      - "SYS_TIME"
+      - "SYS_TTY_CONFIG"
+      - "WAKE_ALARM"
+
+    container_name: "Grafana"
+
+    entrypoint:
+      - "/run.sh"
+
+    environment:
+      - "TZ=Europe/London"
+      - "PATH=/usr/share/grafana/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      - "GF_PATHS_CONFIG=/etc/grafana/grafana.ini"
+      - "GF_PATHS_DATA=/var/lib/grafana"
+      - "GF_PATHS_HOME=/usr/share/grafana"
+      - "GF_PATHS_LOGS=/var/log/grafana"
+      - "GF_PATHS_PLUGINS=/var/lib/grafana/plugins"
+      - "GF_PATHS_PROVISIONING=/etc/grafana/provisioning"
+
+    hostname: "hassist"
+
+    image: "grafana/grafana:latest"
+
+    ipc: "private"
+
+    labels:
+      maintainer: "Grafana Labs <hello@grafana.com>"
+
+    logging:
+      driver: "json-file"
+      options: {}
+
+    network_mode: "host"
+
+    ports:
+      - "3000:3000/tcp"
+
+    privileged: true
+
+    restart: "always"
+
+    security_opt:
+      - "label=disable"
+
+    user: "472"
+
+    volumes:
+      - "/var/lib/grafana:/wkspace/homeassistant/grafana"
+
+    working_dir: "/usr/share/grafana"
+
+  appdaemon:
+
+    cap_drop:
+      - "AUDIT_CONTROL"
+      - "BLOCK_SUSPEND"
+      - "DAC_READ_SEARCH"
+      - "IPC_LOCK"
+      - "IPC_OWNER"
+      - "LEASE"
+      - "LINUX_IMMUTABLE"
+      - "MAC_ADMIN"
+      - "MAC_OVERRIDE"
+      - "NET_ADMIN"
+      - "NET_BROADCAST"
+      - "SYSLOG"
+      - "SYS_ADMIN"
+      - "SYS_BOOT"
+      - "SYS_MODULE"
+      - "SYS_NICE"
+      - "SYS_PACCT"
+      - "SYS_PTRACE"
+      - "SYS_RAWIO"
+      - "SYS_RESOURCE"
+      - "SYS_TIME"
+      - "SYS_TTY_CONFIG"
+      - "WAKE_ALARM"
+
+    container_name: "appdaemon"
+
+    entrypoint:
+      - "./dockerStart.sh"
+
+    environment:
+      - "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      - "LANG=C.UTF-8"
+      - "GPG_KEY=A035C8C19219BA821ECEA86B64E628F8D684696D"
+      - "PYTHON_VERSION=3.10.11"
+      - "PYTHON_PIP_VERSION=23.0.1"
+      - "PYTHON_SETUPTOOLS_VERSION=65.5.1"
+      - "PYTHON_GET_PIP_URL=https://github.com/pypa/get-pip/raw/d5cb0afaf23b8520f1bbcfed521017b4a95f5c01/public/get-pip.py"
+      - "PYTHON_GET_PIP_SHA256=394be00f13fa1b9aaa47e911bdb59a09c3b2986472130f30aa0bfaf7f3980637"
+      - "PYTHONPATH=/usr/lib/python3.10:/usr/lib/python3.10/site-packages"
+
+    expose:
+      - "5050/tcp"
+
+    hostname: "hassist"
+
+    image: "acockburn/appdaemon:latest"
+
+    ipc: "private"
+
+    labels:
+      org.opencontainers.image.created: "2023-04-16T18:25:45.589Z"
+      org.opencontainers.image.description: ":page_facing_up: Python Apps for Home Automation"
+      org.opencontainers.image.licenses: "NOASSERTION"
+      org.opencontainers.image.revision: "16506f3264373fca9fd5ad676741d53c6ccfe02d"
+      org.opencontainers.image.source: "https://github.com/AppDaemon/appdaemon"
+      org.opencontainers.image.title: "appdaemon"
+      org.opencontainers.image.url: "https://github.com/AppDaemon/appdaemon"
+      org.opencontainers.image.version: "4.4.2"
+
+    logging:
+      driver: "json-file"
+      options: {}
+
+    network_mode: "host"
+
+    privileged: true
+
+    restart: "always"
+
+    security_opt:
+      - "label=disable"
+
+    volumes:
+      - "/etc/localtime:/etc/localtime"
+      - "/wkspace/homeassistant/appdaemon/cert:/certs"
+      - "/wkspace/homeassistant/main:/conf"
+
+    working_dir: "/usr/src/app"
+
+  givtcp:
+
+    cap_drop:
+      - "AUDIT_CONTROL"
+      - "BLOCK_SUSPEND"
+      - "DAC_READ_SEARCH"
+      - "IPC_LOCK"
+      - "IPC_OWNER"
+      - "LEASE"
+      - "LINUX_IMMUTABLE"
+      - "MAC_ADMIN"
+      - "MAC_OVERRIDE"
+      - "NET_ADMIN"
+      - "NET_BROADCAST"
+      - "SYSLOG"
+      - "SYS_ADMIN"
+      - "SYS_BOOT"
+      - "SYS_MODULE"
+      - "SYS_NICE"
+      - "SYS_PACCT"
+      - "SYS_PTRACE"
+      - "SYS_RAWIO"
+      - "SYS_RESOURCE"
+      - "SYS_TIME"
+      - "SYS_TTY_CONFIG"
+      - "WAKE_ALARM"
+
+    command:
+      - "python3"
+      - "/app/startup.py"
+
+    container_name: "givtcp"
+
+    environment:
+
+      - "INVERTOR_IP=192.168.1.118"
+
+      - "MQTT_OUTPUT=True"
+
+      - "MQTT_ADDRESS=192.168.1.250"
+
+      - "MQTT_USERNAME=mqttuser"
+
+      - "MQTT_PASSWORD=mqttuser"
+
+      - "MQTT_TOPIC=GIV"
+
+      - "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+      - "LANG=C.UTF-8"
+
+      - "GPG_KEY=A035C8C19219BA821ECEA86B64E628F8D684696D"
+
+      - "PYTHON_VERSION=3.10.0rc2"
+
+      - "PYTHON_PIP_VERSION=21.2.4"
+
+      - "PYTHON_SETUPTOOLS_VERSION=57.5.0"
+
+      - "PYTHON_GET_PIP_URL=https://github.com/pypa/get-pip/raw/c20b0cfd643cd4a19246ccf204e2997af70f6b21/public/get-pip.py"
+
+      - "PYTHON_GET_PIP_SHA256=fa6f3fb93cce234cd4e8dd2beb54a51ab9c247653b52855a48dd44e6b21ff28b"
+
+      - "NUMINVERTORS=1"
+
+      - "INVERTOR_IP_1=192.168.1.118"
+
+      - "NUMBATTERIES_1=1"
+
+      - "INVERTOR_AIO_1=False"
+
+      - "INVERTOR_AC_1=True"
+
+      - "INVERTOR_IP_2="
+
+      - "NUMBATTERIES_2=1"
+
+      - "INVERTOR_AIO_2=False"
+
+      - "INVERTOR_AC_2=True"
+
+      - "INVERTOR_IP_3="
+
+      - "NUMBATTERIES_3=1"
+
+      - "INVERTOR_AIO_3=False"
+
+      - "INVERTOR_AC_3=True"
+
+      - "MQTT_TOPIC_2="
+
+      - "MQTT_TOPIC_3="
+
+      - "MQTT_PORT=1883"
+
+      - "LOG_LEVEL=Info"
+
+      - "PRINT_RAW=True"
+
+      - "SELF_RUN=True"
+
+      - "SELF_RUN_LOOP_TIMER=10"
+
+      - "INFLUX_OUTPUT=True"
+
+      - "INFLUX_URL=http://192.168.1.250:8086/"
+
+      - "INFLUX_TOKEN=PBHjhnfnof7fN-M9BcEBY3j2vKooM73BgJQzpL3qAUUMnZK8y1nOVao1KIVn8vbH5_3xntCqIN6z5AXN_vMZgQ=="
+
+      - "INFLUX_BUCKET=homeassistant"
+
+      - "INFLUX_ORG=homeassistant"
+
+      - "HA_AUTO_D=True"
+
+      - "HADEVICEPREFIX=GivTCP"
+
+      - "HADEVICEPREFIX_2=GivTCP2"
+
+      - "HADEVICEPREFIX_3=GivTCP3"
+
+      - "PYTHONPATH=/app"
+
+      - "DAYRATE=0.31"
+
+      - "NIGHTRATE=0.18"
+
+      - "EXPORTRATE=0.19"
+
+      - "HOSTIP=192.168.1.187"
+
+      - "DYNAMICTARIFF=False"
+
+      - "DAYRATESTART=04:30"
+
+      - "NIGHTRATESTART=02:30"
+
+      - "TZ=Europe/London"
+
+      - "WEB_DASH=False"
+
+      - "WEB_DASH_PORT=3042"
+
+      - "CACHELOCATION=/config/GivTCP"
+
+      - "DATASMOOTHER=low"
+
+      - "QUEUE_RETRIES=2"
+
+      - "SMARTTARGET=False"
+
+      - "GEAPI=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5NTc3MDIxOS1jYWE2LTRmOTctOTE3Ni0zNDBlZGMzZDQxNTgiLCJqdGkiOiIwZTg5ZTE0YzgxYzZlYTE0MzZkNjcwNmMyN2U1ZmI3M2ZhZjRjNjUyMjE0ODE3NjBjNmE4ODlmMmIxMDkzMmMwZWRkYTM1OTRiNTVkYjQ5ZiIsImlhdCI6MTY5NDk3OTk0OS43MDk4NzksIm5iZiI6MTY5NDk3OTk0OS43MDk4ODMsImV4cCI6MzI1MDM2ODAwMDAuMDA2ODk3LCJzdWIiOiI1MDc3MyIsInNjb3BlcyI6WyJhcGkiXX0.n2TckWJkHE01iOnpC_EJXMUH8-pA5MAEfNwvK5fFMabCC_N1cg1Br2PvjoVojOSEAzdGtR_oVfkTjLXazYQWJQ"
+
+      - "SOLCASTAPI=UshRdalRl645kE6rz8FuxLoN62WAGrMd"
+
+      - "SOLCASTSITEID=596f-0b2e-7b99-95ff"
+
+      - "SOLCASTSITEID2="
+
+      - "PALM_WINTER=01,02,03,10,11,12"
+
+      - "PALM_SHOULDER=04,05,09"
+
+      - "PALM_MIN_SOC_TARGET=25"
+
+      - "PALM_MAX_SOC_TARGET=45"
+
+      - "PALM_BATT_RESERVE=4"
+
+      - "PALM_BATT_UTILISATION=0.85"
+
+      - "PALM_WEIGHT=35"
+
+      - "LOAD_HIST_WEIGHT=1"
+
+    expose:
+      - "1883/tcp"
+      - "3000/tcp"
+      - "5173/tcp"
+      - "6345/tcp"
+      - "6379/tcp"
+      - "9181/tcp"
+
+    hostname: "hassist"
+
+    image: "britkat/giv_tcp-ma:latest"
+
+    ipc: "private"
+
+    logging:
+      driver: "json-file"
+      options: {}
+
+    network_mode: "host"
+
+    privileged: true
+
+    restart: "always"
+
+    security_opt:
+      - "label=disable"
+
+    working_dir: "/app"
+
+  home-assistant:
+
+    cap_drop:
+      - "AUDIT_CONTROL"
+      - "BLOCK_SUSPEND"
+      - "DAC_READ_SEARCH"
+      - "IPC_LOCK"
+      - "IPC_OWNER"
+      - "LEASE"
+      - "LINUX_IMMUTABLE"
+      - "MAC_ADMIN"
+      - "MAC_OVERRIDE"
+      - "NET_ADMIN"
+      - "NET_BROADCAST"
+      - "SYSLOG"
+      - "SYS_ADMIN"
+      - "SYS_BOOT"
+      - "SYS_MODULE"
+      - "SYS_NICE"
+      - "SYS_PACCT"
+      - "SYS_PTRACE"
+      - "SYS_RAWIO"
+      - "SYS_RESOURCE"
+      - "SYS_TIME"
+      - "SYS_TTY_CONFIG"
+      - "WAKE_ALARM"
+
+    container_name: "home-assistant"
+
+    entrypoint:
+      - "/init"
+
+    environment:
+      - "TZ=Europe/London"
+      - "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      - "LANG=C.UTF-8"
+      - "S6_BEHAVIOUR_IF_STAGE2_FAILS=2"
+      - "S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0"
+      - "S6_CMD_WAIT_FOR_SERVICES=1"
+      - "S6_SERVICES_READYTIME=50"
+      - "WHEELS_LINKS=https://wheels.home-assistant.io/musllinux/"
+      - "S6_SERVICES_GRACETIME=220000"
+
+    hostname: "hassist"
+
+    image: "homeassistant/home-assistant:latest"
+
+    ipc: "private"
+
+    labels:
+      io.hass.arch: "aarch64"
+      io.hass.base.arch: "aarch64"
+      io.hass.base.image: "ghcr.io/home-assistant/aarch64-base:3.18"
+      io.hass.base.name: "python"
+      io.hass.base.version: "2023.08.0"
+      io.hass.type: "core"
+      io.hass.version: "2023.9.2"
+      org.opencontainers.image.authors: "The Home Assistant Authors"
+      org.opencontainers.image.created: "2023-09-12 19:46:55+00:00"
+      org.opencontainers.image.description: "Open-source home automation platform running on Python 3"
+      org.opencontainers.image.documentation: "https://www.home-assistant.io/docs/"
+      org.opencontainers.image.licenses: "Apache License 2.0"
+      org.opencontainers.image.source: "https://github.com/home-assistant/core"
+      org.opencontainers.image.title: "Home Assistant"
+      org.opencontainers.image.url: "https://www.home-assistant.io/"
+      org.opencontainers.image.version: "2023.9.2"
+
+    logging:
+      driver: "json-file"
+      options: {}
+
+    network_mode: "host"
+
+    ports:
+      - "8123:8123/tcp"
+
+    privileged: true
+
+    restart: "always"
+
+    security_opt:
+      - "label=disable"
+
+    volumes:
+      - "/wkspace/homeassistant/main:/config"
+
+    working_dir: "/config"
+
+  influxdb2:
+
+    cap_drop:
+      - "AUDIT_CONTROL"
+      - "BLOCK_SUSPEND"
+      - "DAC_READ_SEARCH"
+      - "IPC_LOCK"
+      - "IPC_OWNER"
+      - "LEASE"
+      - "LINUX_IMMUTABLE"
+      - "MAC_ADMIN"
+      - "MAC_OVERRIDE"
+      - "NET_ADMIN"
+      - "NET_BROADCAST"
+      - "SYSLOG"
+      - "SYS_ADMIN"
+      - "SYS_BOOT"
+      - "SYS_MODULE"
+      - "SYS_NICE"
+      - "SYS_PACCT"
+      - "SYS_PTRACE"
+      - "SYS_RAWIO"
+      - "SYS_RESOURCE"
+      - "SYS_TIME"
+      - "SYS_TTY_CONFIG"
+      - "WAKE_ALARM"
+
+    command:
+      - "influxd"
+
+    container_name: "influxdb2"
+
+    entrypoint:
+      - "/entrypoint.sh"
+
+    environment:
+      - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      - "CARGO_NET_GIT_FETCH_WITH_CLI=true"
+      - "DEBIAN_FRONTEND=noninteractive"
+      - "HOME=/root"
+      - "LANG=C.UTF-8"
+      - "PIP_DISABLE_PIP_VERSION_CHECK=1"
+      - "PIP_NO_CACHE_DIR=1"
+      - "PIP_PREFER_BINARY=1"
+      - "PYTHONDONTWRITEBYTECODE=1"
+      - "PYTHONUNBUFFERED=1"
+      - "S6_BEHAVIOUR_IF_STAGE2_FAILS=2"
+      - "S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0"
+      - "S6_CMD_WAIT_FOR_SERVICES=1"
+      - "YARN_HTTP_TIMEOUT=1000000"
+      - "TERM=xterm-256color"
+      - "GOSU_VER=1.12"
+      - "INFLUXDB_VERSION=2.0.9"
+      - "INFLUX_CONFIGS_PATH=/etc/influxdb2/influx-configs"
+      - "INFLUXD_INIT_PORT=9999"
+      - "INFLUXD_INIT_PING_ATTEMPTS=600"
+      - "DOCKER_INFLUXDB_INIT_CLI_CONFIG_NAME=default"
+      - "INFLUX_CLI_VERSION=2.7.3"
+      - "TZ=Europe/London"
+
+    hostname: "hassist"
+
+    image: "influxdb:2.0"
+
+    ipc: "private"
+
+    labels:
+      io.hass.arch: "aarch64"
+      io.hass.base.image: "hassioaddons/debian-base"
+      io.hass.base.name: "debian"
+      io.hass.base.version: "6.2.7"
+      io.hass.description: "Scalable datastore for metrics, events, and real-time analytics"
+      io.hass.name: "InfluxDB"
+      io.hass.type: "addon"
+      io.hass.version: "4.7.0"
+      maintainer: "Franck Nijhof <frenck@addons.community>"
+      org.opencontainers.image.authors: "Franck Nijhof <frenck@addons.community>"
+      org.opencontainers.image.created: "2023-05-21T14:48:39Z"
+      org.opencontainers.image.description: "Scalable datastore for metrics, events, and real-time analytics"
+      org.opencontainers.image.documentation: "https://github.com/hassio-addons/addon-influxdb/blob/main/README.md"
+      org.opencontainers.image.licenses: "MIT"
+      org.opencontainers.image.revision: "b0c6954d3c875411289d8649b9c3f3269a38534d"
+      org.opencontainers.image.source: "https://github.com/hassio-addons/addon-influxdb"
+      org.opencontainers.image.title: "InfluxDB"
+      org.opencontainers.image.url: "https://addons.community"
+      org.opencontainers.image.vendor: "Home Assistant Community Add-ons"
+      org.opencontainers.image.version: "4.7.0"
+
+    logging:
+      driver: "json-file"
+      options: {}
+
+    network_mode: "host"
+
+    ports:
+      - "8083:8083/tcp"
+      - "8086:8086/tcp"
+
+    privileged: true
+
+    restart: "always"
+
+    security_opt:
+      - "label=disable"
+
+    volumes:
+      - "/wkspace/homeassistant/influxdb2/data:/data"
+      - "/wkspace/homeassistant/influxdb2/etc:/etc/influxdb2"
+      - "/wkspace/homeassistant/influxdb2:/var/lib/influxdb2"
+
+
+version: "3.6"
+
+services:
+
+  Grafana:
+
+    cap_drop:
+      - "AUDIT_CONTROL"
+      - "BLOCK_SUSPEND"
+      - "DAC_READ_SEARCH"
+      - "IPC_LOCK"
+      - "IPC_OWNER"
+      - "LEASE"
+      - "LINUX_IMMUTABLE"
+      - "MAC_ADMIN"
+      - "MAC_OVERRIDE"
+      - "NET_ADMIN"
+      - "NET_BROADCAST"
+      - "SYSLOG"
+      - "SYS_ADMIN"
+      - "SYS_BOOT"
+      - "SYS_MODULE"
+      - "SYS_NICE"
+      - "SYS_PACCT"
+      - "SYS_PTRACE"
+      - "SYS_RAWIO"
+      - "SYS_RESOURCE"
+      - "SYS_TIME"
+      - "SYS_TTY_CONFIG"
+      - "WAKE_ALARM"
+
+    container_name: "Grafana"
+
+    entrypoint:
+      - "/run.sh"
+
+    environment:
+      - "TZ=Europe/London"
+      - "PATH=/usr/share/grafana/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      - "GF_PATHS_CONFIG=/etc/grafana/grafana.ini"
+      - "GF_PATHS_DATA=/var/lib/grafana"
+      - "GF_PATHS_HOME=/usr/share/grafana"
+      - "GF_PATHS_LOGS=/var/log/grafana"
+      - "GF_PATHS_PLUGINS=/var/lib/grafana/plugins"
+      - "GF_PATHS_PROVISIONING=/etc/grafana/provisioning"
+
+    hostname: "hassist"
+
+    image: "grafana/grafana:latest"
+
+    ipc: "private"
+
+    labels:
+      maintainer: "Grafana Labs <hello@grafana.com>"
+
+    logging:
+      driver: "json-file"
+      options: {}
+
+    network_mode: "host"
+
+    ports:
+      - "3000:3000/tcp"
+
+    privileged: true
+
+    restart: "always"
+
+    security_opt:
+      - "label=disable"
+
+    user: "472"
+
+    volumes:
+      - "/var/lib/grafana:/wkspace/homeassistant/grafana"
+
+    working_dir: "/usr/share/grafana"
+
+  appdaemon:
+
+    cap_drop:
+      - "AUDIT_CONTROL"
+      - "BLOCK_SUSPEND"
+      - "DAC_READ_SEARCH"
+      - "IPC_LOCK"
+      - "IPC_OWNER"
+      - "LEASE"
+      - "LINUX_IMMUTABLE"
+      - "MAC_ADMIN"
+      - "MAC_OVERRIDE"
+      - "NET_ADMIN"
+      - "NET_BROADCAST"
+      - "SYSLOG"
+      - "SYS_ADMIN"
+      - "SYS_BOOT"
+      - "SYS_MODULE"
+      - "SYS_NICE"
+      - "SYS_PACCT"
+      - "SYS_PTRACE"
+      - "SYS_RAWIO"
+      - "SYS_RESOURCE"
+      - "SYS_TIME"
+      - "SYS_TTY_CONFIG"
+      - "WAKE_ALARM"
+
+    container_name: "appdaemon"
+
+    entrypoint:
+      - "./dockerStart.sh"
+
+    environment:
+      - "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      - "LANG=C.UTF-8"
+      - "GPG_KEY=A035C8C19219BA821ECEA86B64E628F8D684696D"
+      - "PYTHON_VERSION=3.10.11"
+      - "PYTHON_PIP_VERSION=23.0.1"
+      - "PYTHON_SETUPTOOLS_VERSION=65.5.1"
+      - "PYTHON_GET_PIP_URL=https://github.com/pypa/get-pip/raw/d5cb0afaf23b8520f1bbcfed521017b4a95f5c01/public/get-pip.py"
+      - "PYTHON_GET_PIP_SHA256=394be00f13fa1b9aaa47e911bdb59a09c3b2986472130f30aa0bfaf7f3980637"
+      - "PYTHONPATH=/usr/lib/python3.10:/usr/lib/python3.10/site-packages"
+
+    expose:
+      - "5050/tcp"
+
+    hostname: "hassist"
+
+    image: "acockburn/appdaemon:latest"
+
+    ipc: "private"
+
+    labels:
+      org.opencontainers.image.created: "2023-04-16T18:25:45.589Z"
+      org.opencontainers.image.description: ":page_facing_up: Python Apps for Home Automation"
+      org.opencontainers.image.licenses: "NOASSERTION"
+      org.opencontainers.image.revision: "16506f3264373fca9fd5ad676741d53c6ccfe02d"
+      org.opencontainers.image.source: "https://github.com/AppDaemon/appdaemon"
+      org.opencontainers.image.title: "appdaemon"
+      org.opencontainers.image.url: "https://github.com/AppDaemon/appdaemon"
+      org.opencontainers.image.version: "4.4.2"
+
+    logging:
+      driver: "json-file"
+      options: {}
+
+    network_mode: "host"
+
+    privileged: true
+
+    restart: "always"
+
+    security_opt:
+      - "label=disable"
+
+    volumes:
+      - "/etc/localtime:/etc/localtime"
+      - "/wkspace/homeassistant/appdaemon/cert:/certs"
+      - "/wkspace/homeassistant/main:/conf"
+
+    working_dir: "/usr/src/app"
+
+  givtcp:
+
+    cap_drop:
+      - "AUDIT_CONTROL"
+      - "BLOCK_SUSPEND"
+      - "DAC_READ_SEARCH"
+      - "IPC_LOCK"
+      - "IPC_OWNER"
+      - "LEASE"
+      - "LINUX_IMMUTABLE"
+      - "MAC_ADMIN"
+      - "MAC_OVERRIDE"
+      - "NET_ADMIN"
+      - "NET_BROADCAST"
+      - "SYSLOG"
+      - "SYS_ADMIN"
+      - "SYS_BOOT"
+      - "SYS_MODULE"
+      - "SYS_NICE"
+      - "SYS_PACCT"
+      - "SYS_PTRACE"
+      - "SYS_RAWIO"
+      - "SYS_RESOURCE"
+      - "SYS_TIME"
+      - "SYS_TTY_CONFIG"
+      - "WAKE_ALARM"
+
+    command:
+      - "python3"
+      - "/app/startup.py"
+
+    container_name: "givtcp"
+
+    environment:
+
+      - "INVERTOR_IP=192.168.1.118"
+
+      - "MQTT_OUTPUT=True"
+
+      - "MQTT_ADDRESS=192.168.1.250"
+
+      - "MQTT_USERNAME=mqttuser"
+
+      - "MQTT_PASSWORD=mqttuser"
+
+      - "MQTT_TOPIC=GIV"
+
+      - "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+      - "LANG=C.UTF-8"
+
+      - "GPG_KEY=A035C8C19219BA821ECEA86B64E628F8D684696D"
+
+      - "PYTHON_VERSION=3.10.0rc2"
+
+      - "PYTHON_PIP_VERSION=21.2.4"
+
+      - "PYTHON_SETUPTOOLS_VERSION=57.5.0"
+
+      - "PYTHON_GET_PIP_URL=https://github.com/pypa/get-pip/raw/c20b0cfd643cd4a19246ccf204e2997af70f6b21/public/get-pip.py"
+
+      - "PYTHON_GET_PIP_SHA256=fa6f3fb93cce234cd4e8dd2beb54a51ab9c247653b52855a48dd44e6b21ff28b"
+
+      - "NUMINVERTORS=1"
+
+      - "INVERTOR_IP_1=192.168.1.118"
+
+      - "NUMBATTERIES_1=1"
+
+      - "INVERTOR_AIO_1=False"
+
+      - "INVERTOR_AC_1=True"
+
+      - "INVERTOR_IP_2="
+
+      - "NUMBATTERIES_2=1"
+
+      - "INVERTOR_AIO_2=False"
+
+      - "INVERTOR_AC_2=True"
+
+      - "INVERTOR_IP_3="
+
+      - "NUMBATTERIES_3=1"
+
+      - "INVERTOR_AIO_3=False"
+
+      - "INVERTOR_AC_3=True"
+
+      - "MQTT_TOPIC_2="
+
+      - "MQTT_TOPIC_3="
+
+      - "MQTT_PORT=1883"
+
+      - "LOG_LEVEL=Info"
+
+      - "PRINT_RAW=True"
+
+      - "SELF_RUN=True"
+
+      - "SELF_RUN_LOOP_TIMER=10"
+
+      - "INFLUX_OUTPUT=True"
+
+      - "INFLUX_URL=http://192.168.1.250:8086/"
+
+      - "INFLUX_TOKEN=PBHjhnfnof7fN-M9BcEBY3j2vKooM73BgJQzpL3qAUUMnZK8y1nOVao1KIVn8vbH5_3xntCqIN6z5AXN_vMZgQ=="
+
+      - "INFLUX_BUCKET=homeassistant"
+
+      - "INFLUX_ORG=homeassistant"
+
+      - "HA_AUTO_D=True"
+
+      - "HADEVICEPREFIX=GivTCP"
+
+      - "HADEVICEPREFIX_2=GivTCP2"
+
+      - "HADEVICEPREFIX_3=GivTCP3"
+
+      - "PYTHONPATH=/app"
+
+      - "DAYRATE=0.31"
+
+      - "NIGHTRATE=0.18"
+
+      - "EXPORTRATE=0.19"
+
+      - "HOSTIP=192.168.1.187"
+
+      - "DYNAMICTARIFF=False"
+
+      - "DAYRATESTART=04:30"
+
+      - "NIGHTRATESTART=02:30"
+
+      - "TZ=Europe/London"
+
+      - "WEB_DASH=False"
+
+      - "WEB_DASH_PORT=3042"
+
+      - "CACHELOCATION=/config/GivTCP"
+
+      - "DATASMOOTHER=low"
+
+      - "QUEUE_RETRIES=2"
+
+      - "SMARTTARGET=False"
+
+      - "GEAPI=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5NTc3MDIxOS1jYWE2LTRmOTctOTE3Ni0zNDBlZGMzZDQxNTgiLCJqdGkiOiIwZTg5ZTE0YzgxYzZlYTE0MzZkNjcwNmMyN2U1ZmI3M2ZhZjRjNjUyMjE0ODE3NjBjNmE4ODlmMmIxMDkzMmMwZWRkYTM1OTRiNTVkYjQ5ZiIsImlhdCI6MTY5NDk3OTk0OS43MDk4NzksIm5iZiI6MTY5NDk3OTk0OS43MDk4ODMsImV4cCI6MzI1MDM2ODAwMDAuMDA2ODk3LCJzdWIiOiI1MDc3MyIsInNjb3BlcyI6WyJhcGkiXX0.n2TckWJkHE01iOnpC_EJXMUH8-pA5MAEfNwvK5fFMabCC_N1cg1Br2PvjoVojOSEAzdGtR_oVfkTjLXazYQWJQ"
+
+      - "SOLCASTAPI=UshRdalRl645kE6rz8FuxLoN62WAGrMd"
+
+      - "SOLCASTSITEID=596f-0b2e-7b99-95ff"
+
+      - "SOLCASTSITEID2="
+
+      - "PALM_WINTER=01,02,03,10,11,12"
+
+      - "PALM_SHOULDER=04,05,09"
+
+      - "PALM_MIN_SOC_TARGET=25"
+
+      - "PALM_MAX_SOC_TARGET=45"
+
+      - "PALM_BATT_RESERVE=4"
+
+      - "PALM_BATT_UTILISATION=0.85"
+
+      - "PALM_WEIGHT=35"
+
+      - "LOAD_HIST_WEIGHT=1"
+
+    expose:
+      - "1883/tcp"
+      - "3000/tcp"
+      - "5173/tcp"
+      - "6345/tcp"
+      - "6379/tcp"
+      - "9181/tcp"
+
+    hostname: "hassist"
+
+    image: "britkat/giv_tcp-ma:latest"
+
+    ipc: "private"
+
+    logging:
+      driver: "json-file"
+      options: {}
+
+    network_mode: "host"
+
+    privileged: true
+
+    restart: "always"
+
+    security_opt:
+      - "label=disable"
+
+    working_dir: "/app"
+
+  home-assistant:
+
+    cap_drop:
+      - "AUDIT_CONTROL"
+      - "BLOCK_SUSPEND"
+      - "DAC_READ_SEARCH"
+      - "IPC_LOCK"
+      - "IPC_OWNER"
+      - "LEASE"
+      - "LINUX_IMMUTABLE"
+      - "MAC_ADMIN"
+      - "MAC_OVERRIDE"
+      - "NET_ADMIN"
+      - "NET_BROADCAST"
+      - "SYSLOG"
+      - "SYS_ADMIN"
+      - "SYS_BOOT"
+      - "SYS_MODULE"
+      - "SYS_NICE"
+      - "SYS_PACCT"
+      - "SYS_PTRACE"
+      - "SYS_RAWIO"
+      - "SYS_RESOURCE"
+      - "SYS_TIME"
+      - "SYS_TTY_CONFIG"
+      - "WAKE_ALARM"
+
+    container_name: "home-assistant"
+
+    entrypoint:
+      - "/init"
+
+    environment:
+      - "TZ=Europe/London"
+      - "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      - "LANG=C.UTF-8"
+      - "S6_BEHAVIOUR_IF_STAGE2_FAILS=2"
+      - "S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0"
+      - "S6_CMD_WAIT_FOR_SERVICES=1"
+      - "S6_SERVICES_READYTIME=50"
+      - "WHEELS_LINKS=https://wheels.home-assistant.io/musllinux/"
+      - "S6_SERVICES_GRACETIME=220000"
+
+    hostname: "hassist"
+
+    image: "homeassistant/home-assistant:latest"
+
+    ipc: "private"
+
+    labels:
+      io.hass.arch: "aarch64"
+      io.hass.base.arch: "aarch64"
+      io.hass.base.image: "ghcr.io/home-assistant/aarch64-base:3.18"
+      io.hass.base.name: "python"
+      io.hass.base.version: "2023.08.0"
+      io.hass.type: "core"
+      io.hass.version: "2023.9.2"
+      org.opencontainers.image.authors: "The Home Assistant Authors"
+      org.opencontainers.image.created: "2023-09-12 19:46:55+00:00"
+      org.opencontainers.image.description: "Open-source home automation platform running on Python 3"
+      org.opencontainers.image.documentation: "https://www.home-assistant.io/docs/"
+      org.opencontainers.image.licenses: "Apache License 2.0"
+      org.opencontainers.image.source: "https://github.com/home-assistant/core"
+      org.opencontainers.image.title: "Home Assistant"
+      org.opencontainers.image.url: "https://www.home-assistant.io/"
+      org.opencontainers.image.version: "2023.9.2"
+
+    logging:
+      driver: "json-file"
+      options: {}
+
+    network_mode: "host"
+
+    ports:
+      - "8123:8123/tcp"
+
+    privileged: true
+
+    restart: "always"
+
+    security_opt:
+      - "label=disable"
+
+    volumes:
+      - "/wkspace/homeassistant/main:/config"
+
+    working_dir: "/config"
+
+  influxdb2:
+
+    cap_drop:
+      - "AUDIT_CONTROL"
+      - "BLOCK_SUSPEND"
+      - "DAC_READ_SEARCH"
+      - "IPC_LOCK"
+      - "IPC_OWNER"
+      - "LEASE"
+      - "LINUX_IMMUTABLE"
+      - "MAC_ADMIN"
+      - "MAC_OVERRIDE"
+      - "NET_ADMIN"
+      - "NET_BROADCAST"
+      - "SYSLOG"
+      - "SYS_ADMIN"
+      - "SYS_BOOT"
+      - "SYS_MODULE"
+      - "SYS_NICE"
+      - "SYS_PACCT"
+      - "SYS_PTRACE"
+      - "SYS_RAWIO"
+      - "SYS_RESOURCE"
+      - "SYS_TIME"
+      - "SYS_TTY_CONFIG"
+      - "WAKE_ALARM"
+
+    command:
+      - "influxd"
+
+    container_name: "influxdb2"
+
+    entrypoint:
+      - "/entrypoint.sh"
+
+    environment:
+      - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      - "CARGO_NET_GIT_FETCH_WITH_CLI=true"
+      - "DEBIAN_FRONTEND=noninteractive"
+      - "HOME=/root"
+      - "LANG=C.UTF-8"
+      - "PIP_DISABLE_PIP_VERSION_CHECK=1"
+      - "PIP_NO_CACHE_DIR=1"
+      - "PIP_PREFER_BINARY=1"
+      - "PYTHONDONTWRITEBYTECODE=1"
+      - "PYTHONUNBUFFERED=1"
+      - "S6_BEHAVIOUR_IF_STAGE2_FAILS=2"
+      - "S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0"
+      - "S6_CMD_WAIT_FOR_SERVICES=1"
+      - "YARN_HTTP_TIMEOUT=1000000"
+      - "TERM=xterm-256color"
+      - "GOSU_VER=1.12"
+      - "INFLUXDB_VERSION=2.0.9"
+      - "INFLUX_CONFIGS_PATH=/etc/influxdb2/influx-configs"
+      - "INFLUXD_INIT_PORT=9999"
+      - "INFLUXD_INIT_PING_ATTEMPTS=600"
+      - "DOCKER_INFLUXDB_INIT_CLI_CONFIG_NAME=default"
+      - "INFLUX_CLI_VERSION=2.7.3"
+      - "TZ=Europe/London"
+
+    hostname: "hassist"
+
+    image: "influxdb:2.0"
+
+    ipc: "private"
+
+    labels:
+      io.hass.arch: "aarch64"
+      io.hass.base.image: "hassioaddons/debian-base"
+      io.hass.base.name: "debian"
+      io.hass.base.version: "6.2.7"
+      io.hass.description: "Scalable datastore for metrics, events, and real-time analytics"
+      io.hass.name: "InfluxDB"
+      io.hass.type: "addon"
+      io.hass.version: "4.7.0"
+      maintainer: "Franck Nijhof <frenck@addons.community>"
+      org.opencontainers.image.authors: "Franck Nijhof <frenck@addons.community>"
+      org.opencontainers.image.created: "2023-05-21T14:48:39Z"
+      org.opencontainers.image.description: "Scalable datastore for metrics, events, and real-time analytics"
+      org.opencontainers.image.documentation: "https://github.com/hassio-addons/addon-influxdb/blob/main/README.md"
+      org.opencontainers.image.licenses: "MIT"
+      org.opencontainers.image.revision: "b0c6954d3c875411289d8649b9c3f3269a38534d"
+      org.opencontainers.image.source: "https://github.com/hassio-addons/addon-influxdb"
+      org.opencontainers.image.title: "InfluxDB"
+      org.opencontainers.image.url: "https://addons.community"
+      org.opencontainers.image.vendor: "Home Assistant Community Add-ons"
+      org.opencontainers.image.version: "4.7.0"
+
+    logging:
+      driver: "json-file"
+      options: {}
+
+    network_mode: "host"
+
+    ports:
+      - "8083:8083/tcp"
+      - "8086:8086/tcp"
+
+    privileged: true
+
+    restart: "always"
+
+    security_opt:
+      - "label=disable"
+
+    volumes:
+      - "/wkspace/homeassistant/influxdb2/data:/data"
+      - "/wkspace/homeassistant/influxdb2/etc:/etc/influxdb2"
+      - "/wkspace/homeassistant/influxdb2:/var/lib/influxdb2"
+
+version: "3.6"
+
