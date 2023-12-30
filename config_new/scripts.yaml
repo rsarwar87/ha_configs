@@ -1,0 +1,66 @@
+find_my_phone_tab:
+  sequence:
+    - service: notify.mobile_app_sm_g998b
+      data:
+        message: command_volume_level
+        data:
+          media_stream: alarm_stream
+          command: 30
+    - service: notify.mobile_app_sm_g998b
+      data:
+        message: "command_ringer_mode"
+        data:
+          command: "normal"
+    - service: notify.mobile_app_sm_g998b
+      data:
+        message: Home Assistant
+        title: Home Assistant is searching your phone!
+        data:
+          ttl: 0
+          priority: high
+          channel: alarm_stream
+  mode: single
+find_my_phone_xperia:
+  sequence:
+    - service: notify.mobile_app_sm_g998b
+      data:
+        message: command_volume_level
+        data:
+          media_stream: alarm_stream
+          command: 30
+    - service: notify.mobile_app_sm_g998b
+      data:
+        message: "command_ringer_mode"
+        data:
+          command: "normal"
+    - service: notify.mobile_app_sm_g998b
+      data:
+        message: Home Assistant
+        title: Home Assistant is searching your phone!
+        data:
+          ttl: 0
+          priority: high
+          channel: alarm_stream
+  mode: single
+find_my_phone_galaxy:
+  sequence:
+    - service: notify.mobile_app_sm_g998b
+      data:
+        message: command_volume_level
+        data:
+          media_stream: alarm_stream
+          command: 30
+    - service: notify.mobile_app_sm_g998b
+      data:
+        message: "command_ringer_mode"
+        data:
+          command: "normal"
+    - service: notify.mobile_app_sm_g998b
+      data:
+        message: Home Assistant
+        title: Home Assistant is searching your phone!
+        data:
+          ttl: 0
+          priority: high
+          channel: alarm_stream
+  mode: single

@@ -1,0 +1,19 @@
+{
+	"enabled": true,
+	"name": "GB News",
+	"number": 1011,
+	"icon": "https://upload.wikimedia.org/wikipedia/en/thumb/3/35/GB_News_Logo.svg/1920px-GB_News_Logo.svg.png",
+	"epgauto": true,
+	"epglimit": 0,
+	"dvr_pre_time": 0,
+	"dvr_pst_time": 0,
+	"epg_running": -1,
+	"services": [
+		"d398595b4a36eac95a0cf45436e79be5"
+	],
+	"tags": [
+		"13f2a93db89f76bb3f6194be785531ea",
+		"e690a07523f43dadaaeacad89a3467be"
+	],
+	"bouquet": "8bf8cbe4dfd41308251abec802979ab3"
+}

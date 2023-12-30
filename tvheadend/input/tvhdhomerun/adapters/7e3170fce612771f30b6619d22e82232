@@ -1,0 +1,38 @@
+{
+	"uuid": "7e3170fce612771f30b6619d22e82232",
+	"frontends": {
+		"DVB-T #0": {
+			"enabled": false,
+			"priority": 0,
+			"spriority": 0,
+			"displayname": "HDHomeRun DVB-T Tuner #0 (192.168.1.36)",
+			"ota_epg": true,
+			"initscan": true,
+			"idlescan": true,
+			"free_weight": 0,
+			"remove_scrambled": false,
+			"networks": [
+			],
+			"linked": "",
+			"type": "DVB-T",
+			"uuid": "673b8dfde4f7cc49d0b29b218b3f1346"
+		},
+		"DVB-T #1": {
+			"enabled": false,
+			"priority": 0,
+			"spriority": 0,
+			"displayname": "HDHomeRun DVB-T Tuner #1 (192.168.1.36)",
+			"ota_epg": true,
+			"initscan": true,
+			"idlescan": true,
+			"free_weight": 0,
+			"remove_scrambled": false,
+			"networks": [
+			],
+			"linked": "",
+			"type": "DVB-T",
+			"uuid": "ffa493468680b82008e707020fe1a67d"
+		}
+	},
+	"fe_override": "DVB-T"
+}

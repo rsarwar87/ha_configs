@@ -1,0 +1,65 @@
+{
+	"enabled": true,
+	"maptoch": true,
+	"mapopt": [
+		"mapnolcn",
+		"mapnoname",
+		"mapradio",
+		"encrypted",
+		"merge_name",
+		"merge_same_name_fuzzy",
+		"tidy_channel_name"
+	],
+	"chtag": [
+		"bouquet_tag"
+	],
+	"chtag_ref": "13f2a93db89f76bb3f6194be785531ea",
+	"name": "iptv",
+	"ssl_peer_verify": false,
+	"ext_url_period": 60,
+	"source": "iptv-network://2b2e055975d26054d16624d2779a69b8",
+	"services": {
+		"5cd62823c687304d8b84afac008bf337": {
+			"lcn": 4000000
+		},
+		"d398595b4a36eac95a0cf45436e79be5": {
+			"lcn": 11000000
+		},
+		"ad2afa557f69d3376c7eb7ae5c0a321f": {
+			"lcn": 8000000
+		},
+		"2075191ed4e5514b4f226264f780a057": {
+			"lcn": 12000000
+		},
+		"46854efce47b0c5f5dd381ed6f58d7bb": {
+			"lcn": 6000000
+		},
+		"ae06bdc338eb6ab4eb61c58549633339": {
+			"lcn": 2000000
+		},
+		"cfbd678629e45a80257891bef71af858": {
+			"lcn": 10000000
+		},
+		"d0c0c70ef0a312eac2ff5f2fc7d8ada9": {
+			"lcn": 5000000
+		},
+		"26ff87196031e52998aac615ba336cd7": {
+			"lcn": 9000000
+		},
+		"3a0a957881201237730157ec2461182e": {
+			"lcn": 7000000
+		},
+		"9cb3302dda6e91792ce34d880ae7fa87": {
+			"lcn": 3000000
+		},
+		"a0a5225975ebd70f9a4d69391317d024": {
+			"lcn": 13000000
+		},
+		"805488ca22fca5f14bac2608e292b50b": {
+			"lcn": 1000000
+		}
+	},
+	"services_seen": 13,
+	"comment": "file:///config/ip_player.m3u",
+	"lcn_off": 0
+}
