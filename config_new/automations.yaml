@@ -1,0 +1,84 @@
+- id: '1695473497631'
+  alias: Solcast update
+  description: ''
+  trigger:
+  - platform: time
+    at: '23:00:00'
+  - platform: time
+    at: '12:00:00'
+  - platform: time
+    at: 04:00:00
+  - platform: time
+    at: 01:50:00
+  - platform: time
+    at: 06:00:00
+  - platform: time
+    at: 08:00:00
+  - platform: time
+    at: 09:00:00
+  - platform: time
+    at: '15:00:00'
+  - platform: time
+    at: '18:00:00'
+  condition: []
+  action:
+  - service: solcast_solar.update_forecasts
+    data: {}
+  mode: single
+- id: '1700524163820'
+  alias: Plug heater
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.givtcp_fa2308g859_last_updated_time
+  action:
+  - if:
+    - condition: or
+      conditions:
+      - condition: numeric_state
+        entity_id: sensor.givtcp_bj2308g361_battery_cell_1_temperature
+        above: 22
+      - condition: numeric_state
+        entity_id: sensor.givtcp_bj2308g361_battery_cell_2_temperature
+        above: 22
+      - condition: numeric_state
+        entity_id: sensor.givtcp_bj2308g361_battery_cell_3_temperature
+        above: 22
+      - condition: numeric_state
+        entity_id: sensor.givtcp_bj2308g361_battery_cell_4_temperature
+        above: 22
+    then:
+    - entity_id: switch.plug
+      service: light.turn_off
+    else:
+    - if:
+      - condition: or
+        conditions:
+        - condition: numeric_state
+          entity_id: sensor.givtcp_bj2308g361_battery_cell_1_temperature
+          below: 18
+        - condition: numeric_state
+          entity_id: sensor.givtcp_bj2308g361_battery_cell_2_temperature
+          below: 18
+        - condition: numeric_state
+          entity_id: sensor.givtcp_bj2308g361_battery_cell_3_temperature
+          below: 18
+        - condition: numeric_state
+          entity_id: sensor.givtcp_bj2308g361_battery_cell_4_temperature
+          below: 18
+      then:
+      - entity_id: switch.plug
+        service: light.turn_on
+  mode: single
+- id: '1700835598935'
+  alias: plug_timeout
+  description: ''
+  trigger:
+  - platform: time_pattern
+    minutes: '30'
+  condition: []
+  action:
+  - entity_id: switch.plug
+    service: light.turn_off
+  mode: single

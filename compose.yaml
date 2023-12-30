@@ -191,7 +191,7 @@ services:
 
     environment:
 
-      - "INVERTOR_IP=192.168.1.118"
+      - "INVERTOR_IP=192.168.1.120"
 
       - "MQTT_OUTPUT=True"
 
@@ -221,7 +221,7 @@ services:
 
       - "NUMINVERTORS=1"
 
-      - "INVERTOR_IP_1=192.168.1.118"
+      - "INVERTOR_IP_1=192.168.1.120"
 
       - "NUMBATTERIES_1=1"
 
@@ -754,7 +754,7 @@ services:
 
     environment:
 
-      - "INVERTOR_IP=192.168.1.118"
+      - "INVERTOR_IP=192.168.1.120"
 
       - "MQTT_OUTPUT=True"
 
@@ -784,7 +784,7 @@ services:
 
       - "NUMINVERTORS=1"
 
-      - "INVERTOR_IP_1=192.168.1.118"
+      - "INVERTOR_IP_1=192.168.1.120"
 
       - "NUMBATTERIES_1=1"
 

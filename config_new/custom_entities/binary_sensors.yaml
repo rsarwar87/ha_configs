@@ -1,0 +1,15 @@
+  - platform: ping
+    host: 192.168.1.248
+    name: "Rock5B Wifi1"
+    count: 10
+    scan_interval: 15
+  - platform: ping
+    host: 192.168.1.249
+    name: "Rock5B Wifi0"
+    count: 10
+    scan_interval: 15
+  - platform: ping
+    host: 192.168.1.222
+    name: "Rock5B Eth"
+    count: 10
+    scan_interval: 15

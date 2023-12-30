@@ -1,0 +1,52 @@
+  heating:
+    title: Heating
+    show_in_navbar: true
+    show_in_favorites: true
+    show_in_menu: true
+    subtitle: "[[[ return `HKI 5 v.${states['sensor.hki_current_version'].state}`; ]]]"
+    icon: mdi:heating-coil 
+    addons:
+      custom:
+        - title: Bedroom Thermostat
+          cards:
+          - type: thermostat
+            entity: climate.bed_room
+          - type: history-graph
+            entities:
+              - entity: climate.bed_room
+            hours_to_show: 18
+        - title: Study Thermostat
+          cards:
+          - type: thermostat
+            entity: climate.study_room
+          - type: history-graph
+            entities:
+              - entity: climate.study_room
+            hours_to_show: 18
+        - title: Garden Thermostat
+          cards:
+          - type: thermostat
+            entity: climate.garden_room
+          - type: history-graph
+            entities:
+              - entity: climate.garden_room
+            hours_to_show: 18
+        - title: LivingRoom Thermostat
+          cards:
+          - type: thermostat
+            entity: climate.living_room
+          - type: history-graph
+            entities:
+              - entity: climate.living_room
+            hours_to_show: 18
+
+        - title: DinningRoom Thermostat
+          cards:
+          - type: thermostat
+            entity: climate.dinning_room
+          - type: history-graph
+            entities:
+              - entity: climate.dinning_room
+            hours_to_show: 18
+
+

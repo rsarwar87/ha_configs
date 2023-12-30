@@ -1,0 +1,29 @@
+  batteryin:
+    source: sensor.givtcp_fa2308g859_battery_charge_energy_today_kwh
+    name: BatteryIn
+    cycle: daily
+  batteryout:
+    source: sensor.givtcp_fa2308g859_battery_discharge_energy_today_kwh
+    name: BatteryOut
+    cycle: daily
+  gridout:
+    source: sensor.givtcp_fa2308g859_export_energy_today_kwh
+    name: GridOut
+    cycle: daily
+  gridoctoin:
+    source: sensor.octopus_energy_electricity_22e5232573_2000027593839_current_accumulative_consumption
+    name: GridOctoIn
+    cycle: daily
+  gasin:
+    source: sensor.octopus_energy_gas_e6e09639492323_7402173408_current_accumulative_consumption
+    name: GasIn
+    cycle: daily
+  gridin:
+    source: sensor.givtcp_fa2308g859_import_energy_today_kwh
+    name: GridIn
+    cycle: daily
+  pv_energy:
+    source: sensor.givtcp_fa2308g859_pv_energy_today_kwh
+    name: PV Energy
+    cycle: daily
+

@@ -1,0 +1,11 @@
+  - sensor:
+    - name: 'SystemLoss'
+      device_class: power
+      unit_of_measurement: W
+      state: >
+        {{ '%d' | format(states('sensor.givtcp_fa2308g859_pv_power') | float - 
+                              states('sensor.givtcp_fa2308g859_grid_power') | float + 
+                              states('sensor.givtcp_fa2308g859_battery_power') | float -
+                              states('sensor.givtcp_fa2308g859_load_power') | float
+                              ) }}
+                              

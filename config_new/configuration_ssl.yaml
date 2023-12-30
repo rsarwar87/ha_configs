@@ -1,0 +1,85 @@
+
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+http:
+  ssl_certificate: /config/cert/cert.pem
+  ssl_key: /config/cert/key.pem
+  cors_allowed_origins:
+    - https://google.com
+    - https://www.home-assistant.io
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 192.168.1.0/24
+  ip_ban_enabled: true
+  login_attempts_threshold: 5
+
+homeassistant:
+  packages: !include_dir_named packages/
+
+binary_sensor: !include custom_entities/binary_sensors.yaml 
+template: !include custom_entities/templates.yaml 
+utility_meter: !include custom_entities/utility_meters.yaml 
+
+
+panel_iframe:
+  portainer:
+    title: "Portainer"
+    url: "https://connectify29.asuscomm.com:55555/"
+  router:
+    title: "InfluxDB 2.0"
+    url: "https://connectify29.asuscomm.com:31111/"
+  grafana:
+    title: "Grafana"
+    url: "https://connectify29.asuscomm.com:33333/d/da8d3cfc-c7c0-41f2-b23b-3420eae154e1/givenergy?orgId=1&from=now-24h&to=now"
+influxdb:
+  api_version: 2
+  ssl: false
+  host: 192.168.1.250
+  port: 8086
+  token: hR1vbtQe071Kd2UZ-JnZw9B27E9s7QoNQrxEROjo8_WqL9h_nfCKJrksvh8PiP_zFDVKHTDf7xjQ6HiffnRrGQ==
+  organization: homeassist
+  bucket: homeassist
+  exclude:
+    entity_globs:
+      - sensor.givtcp_f*
+  include:
+    entity_globs:
+      - sensor.givtcp_b*
+    entities:
+      - sensor.givtcp_bj2308g361_battery_cell_1_temperature
+      - sensor.givtcp_bj2308g361_battery_cell_2_temperature
+      - sensor.givtcp_bj2308g361_battery_cell_3_temperature
+      - sensor.givtcp_bj2308g361_battery_cell_4_temperature
+      - sensor.givtcp_bj2308g361_battery_temperature
+  # tags:
+  #   source: HA
+  # tags_attributes:
+  #   - friendly_name
+  # default_measurement: units
+  # exclude:
+  #   entities:
+  #     - zone.home
+  #   domains:
+  #     - persistent_notification
+  #     - person
+  # include:
+  #   domains:
+  #     - sensor
+  #     - binary_sensor
+  #     - sun
+  #   entities:
+  #     - weather.home
+
+recorder:
+  auto_purge: true #currently the default
+  purge_keep_days: 10
+

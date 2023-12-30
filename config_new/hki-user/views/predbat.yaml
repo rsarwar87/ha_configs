@@ -1,0 +1,642 @@
+  predbat:
+    title: PredBat
+    show_in_navbar: true
+    show_in_favorites: true
+    show_in_menu: true
+    subtitle: "[[[ return `PredBat: ${states['predbat.status'].state}`; ]]]"
+    icon: mdi:sun-compass 
+    layout:
+      layout_type: custom:horizontal-layout
+      layout:
+        max_cols: 5 
+            
+    addons:
+      custom:
+        - title: hide
+          cards:
+            - type: custom:mushroom-chips-card
+              chips:
+                - type: entity
+                  entity: switch.predbat_set_charge_freeze
+                  name: Charge/Discharge Settings
+                  content_info: name
+                  tap_action: 
+                    action: call-service
+                    service: browser_mod.popup
+                    data:
+                      title: Charging Settings  
+                      dismissable: true
+                      autoclose: false
+                      content:
+                        type: entities  
+                        entities:   
+                          - switch.predbat_set_charge_window
+                          - switch.predbat_set_charge_freeze
+                          - switch.predbat_set_reserve_enable
+                          - switch.predbat_set_discharge_freeze_only
+                          - switch.predbat_set_discharge_during_charge
+                - type: entity
+                  entity: switch.predbat_debug_enable   
+                  name: Config
+                  content_info: name
+                  tap_action: 
+                    action: call-service
+                    service: browser_mod.popup
+                    data:
+                      title: Config
+                      dismissable: true
+                      autoclose: false
+                      content:
+                        type: entities
+                        entities:   
+                          - predbat.status
+                          - select.predbat_mode
+                          - switch.predbat_set_read_only
+                          - switch.predbat_expert_mode
+                          - switch.predbat_debug_enable
+                          - switch.predbat_plan_debug
+                          - switch.predbat_battery_capacity_nominal
+                          - switch.predbat_calculate_discharge_oncharge
+                          - switch.predbat_calculate_second_pass
+                          - switch.predbat_calculate_tweak_plan
+                          - switch.predbat_calculate_inday_adjustment
+                          - switch.predbat_set_status_notify
+                          - switch.predbat_set_inverter_notify
+                          - switch.predbat_inverter_soc_reset
+                          - switch.predbat_combine_discharge_slots
+                          - switch.predbat_combine_charge_slots
+                          - switch.predbat_load_filter_modal
+                          - switch.predbat_octopus_intelligent_charging
+                          - switch.predbat_octopus_intelligent_ignore_unplugged
+                          - switch.predbat_metric_cloud_enable
+            - type: custom:mushroom-chips-card
+              chips:
+                - type: entity
+                  entity: input_number.predbat_inverter_loss  
+                  name: Parameters
+                  content_info: name
+                  tap_action: 
+                    action: call-service
+                    service: browser_mod.popup
+                    data:
+                      title: Parameters 
+                      dismissable: true
+                      autoclose: false
+                      content:
+                        type: entities  
+                        entities:   
+                          - input_number.predbat_pv_metric10_weight
+                          - input_number.predbat_pv_scaling
+                          - input_number.predbat_load_scaling
+                          - input_number.predbat_battery_rate_max_scaling
+                          - input_number.predbat_battery_loss
+                          - input_number.predbat_battery_loss_discharge
+                          - input_number.predbat_inverter_loss
+                          - input_number.predbat_best_soc_keep
+                          - input_number.predbat_best_soc_min
+                          - input_number.predbat_best_soc_max
+                          - input_number.predbat_metric_min_improvement
+                          - input_number.predbat_metric_min_improvement_discharge
+                          - input_number.predbat_metric_battery_cycle
+                          - input_number.predbat_metric_battery_value_scaling
+                          - input_number.predbat_metric_future_rate_offset_import
+                          - input_number.predbat_metric_future_rate_offset_export
+                          - input_number.predbat_metric_inday_adjust_damping
+                          - input_number.predbat_rate_low_threshold
+                          - input_number.predbat_rate_high_threshold
+                          - input_number.predbat_calculate_plan_every
+                          - input_number.predbat_forecast_plan_hours
+                          - input_number.predbat_set_reserve_min
+                          - input_number.predbat_holiday_days_left
+                - type: entity
+                  entity: binary_sensor.predbat_car_charging_slot
+                  name: Status
+                  content_info: name
+                  tap_action: 
+                    action: call-service
+                    service: browser_mod.popup
+                    data:
+                      title: Status 
+                      dismissable: true
+                      autoclose: false
+                      content:
+                        type: entities  
+                        entities  :   
+                          - predbat.cost_today
+                          - predbat.cost_today_import
+                          - predbat.cost_today_export
+                          - predbat.load_inday_adjustment
+                          - predbat.load_energy_actual
+                          - predbat.load_energy_predicted
+                          - predbat.load_energy_adjusted
+                          - predbat.charge_limit_kw
+                          - predbat.charge_limit
+                          - predbat.charge_start
+                          - predbat.charge_end
+                          - predbat.battery_hours_left
+                          - predbat.soc_kw_h0
+                          - predbat.soc_kw
+                          - predbat.battery_power
+                          - predbat.battery_cycle
+                          - predbat.pv_power
+                          - predbat.grid_power
+                          - predbat.load_power
+                          - predbat.soc_min_kwh
+                          - predbat.export_energy
+                          - predbat.export_energy_h0
+                          - predbat.load_energy
+                          - predbat.load_energy_h0
+                          - predbat.pv_energy
+                          - predbat.pv_energy_h0
+                          - predbat.import_energy
+                          - predbat.import_energy_h0
+                          - predbat.import_energy_battery
+                          - predbat.import_energy_house
+                          - predbat.metric
+                          - predbat.duration
+                          - predbat.soc_kw_base10
+                          - predbat.base10_pv_energy
+                          - predbat.base10_metric
+                          - predbat.base10_export_energy
+                          - predbat.base10_load_energy
+                          - predbat.base10_import_energy
+                          - predbat.soc_kw_best10
+                          - predbat.best10_pv_energy
+                          - predbat.best10_metric
+                          - predbat.best10_export_energy
+                          - predbat.best10_load_energy
+                          - predbat.best10_import_energy
+                          - predbat.best_battery_hours_left
+                          - predbat.soc_kw_best
+                          - predbat.battery_power_best
+                          - predbat.battery_cycle_best
+                          - predbat.pv_power_best
+                          - predbat.grid_power_best
+                          - predbat.load_power_best
+                          - predbat.soc_kw_best_h1
+                          - predbat.soc_kw_best_h8
+                          - predbat.soc_kw_best_h12
+                          - predbat.best_soc_min_kwh
+                          - predbat.best_export_energy
+                          - predbat.best_load_energy
+                          - predbat.best_pv_energy
+                          - predbat.best_import_energy
+                          - predbat.best_import_energy_battery
+                          - predbat.best_import_energy_house
+                          - predbat.best_metric
+                          - predbat.record
+                          - predbat.iboost_best
+                          - binary_sensor.predbat_export_trigger_large
+                          - binary_sensor.predbat_export_trigger_small
+                          - predbat.best_charge_limit_kw
+                          - predbat.best_charge_limit
+                          - predbat.best_charge_start
+                          - predbat.best_charge_end
+                          - predbat.best_discharge_limit_kw
+                          - predbat.best_discharge_limit
+                          - predbat.best_discharge_start
+                          - predbat.best_discharge_end
+                          - predbat.plan_html
+                          - predbat.high_rate_export_start
+                          - predbat.high_rate_export_end
+                          - predbat.high_rate_export_cost
+                          - binary_sensor.predbat_high_rate_export_slot
+                          - predbat.high_rate_export_duration
+                          - predbat.high_rate_export_start_2
+                          - predbat.high_rate_export_end_2
+                          - predbat.high_rate_export_cost_2
+                          - predbat.rates_export
+                          - predbat.low_rate_start
+                          - predbat.low_rate_end
+                          - predbat.low_rate_cost
+                          - binary_sensor.predbat_low_rate_slot
+                          - predbat.low_rate_duration
+                          - predbat.low_rate_start_2
+                          - predbat.low_rate_end_2
+                          - predbat.low_rate_cost_2
+                          - predbat.rates
+                          - binary_sensor.predbat_charging
+                          - binary_sensor.predbat_discharging
+                          - predbat.status
+                - type: entity
+                  entity: sensor.solcast_pv_forecast_forecast_day_3
+                  name: Solcast
+                  content_info: name
+                  tap_action: 
+                    action: call-service
+                    service: browser_mod.popup
+                    data:
+                      title: Status 
+                      dismissable: true
+                      autoclose: false
+                      content:
+                        type: entities  
+                        entities  :   
+                          - entity: sensor.solcast_pv_forecast_forecast_day_3
+                            name: Forecast Day 3
+                          - entity: sensor.solcast_pv_forecast_forecast_day_4
+                            name: Forecast Day 4
+                          - entity: sensor.solcast_pv_forecast_forecast_day_5
+                            name: Forecast Day 5
+                          - entity: sensor.solcast_pv_forecast_forecast_day_6
+                            name: Forecast Day 6
+                          - entity: sensor.solcast_pv_forecast_forecast_day_7
+                            name: Forecast Day 7
+                          - entity: sensor.solcast_pv_forecast_forecast_next_hour
+                            name: Forecast Next Hour
+                          - entity: sensor.solcast_pv_forecast_forecast_remaining_today
+                            name: Forecast Remaining Today
+                          - entity: sensor.solcast_pv_forecast_forecast_this_hour
+                            name: Forecast This Hour
+                          - entity: sensor.solcast_pv_forecast_forecast_today
+                            name: Forecast Today
+                          - entity: sensor.solcast_pv_forecast_forecast_tomorrow
+                            name: Forecast Tomorrow
+                          - entity: sensor.solcast_pv_forecast_peak_forecast_today
+                            name: Peak Forecast Today
+                          - entity: sensor.solcast_pv_forecast_peak_forecast_tomorrow
+                            name: Peak Forecast Tomorrow
+                          - entity: sensor.solcast_pv_forecast_peak_time_today
+                            name: Peak Time Today
+                          - entity: sensor.solcast_pv_forecast_peak_time_tomorrow
+                            name: Peak Time Tomorrow
+                          - entity: sensor.solcast_pv_forecast_power_next_30_mins
+                            name: Power Next 30 Mins
+                          - entity: sensor.solcast_pv_forecast_power_next_hour
+                            name: Power Next Hour
+                          - entity: sensor.solcast_pv_forecast_power_now
+                            name: Power Now
+            - type: entities
+              entities:
+                - update.predbat_version
+        - title: hide
+          cards:
+            - type: custom:apexcharts-card
+              header:
+                show: true
+                title: Home Battery Prediction
+                show_states: true
+                colorize_states: true
+              graph_span: 52h
+              span:
+                start: minute
+                offset: '-12h'
+              now:
+                show: true
+              yaxis:
+                - min: 0
+                  max: 5.2
+              series:
+                - entity: predbat.soc_kw_h0
+                  stroke_width: 1
+                  curve: smooth
+                  name: actual
+                  extend_to: now
+                  show:
+                    in_header: raw
+                - entity: predbat.soc_kw
+                  stroke_width: 1 
+                  curve: smooth
+                  name: base
+                  data_generator: >
+                    let res = []; for (const [key, value] of
+                    Object.entries(entity.attributes.results)) { res.push([new
+                    Date(key).getTime(), value]); } return res.sort((a, b) => { return a[0] -
+                    b[0]  })
+                  show:
+                    in_header: raw
+                - entity: predbat.soc_kw_best
+                  stroke_width: 2
+                  curve: smooth
+                  name: best
+                  data_generator: >
+                    let res = []; for (const [key, value] of
+                    Object.entries(entity.attributes.results)) { res.push([new
+                    Date(key).getTime(), value]); } return res.sort((a, b) => { return a[0] -
+                    b[0]  })
+                  show:
+                    in_header: raw
+                - entity: predbat.soc_kw_best10
+                  stroke_width: 1
+                  curve: smooth
+                  name: best10
+                  data_generator: >
+                    let res = []; for (const [key, value] of
+                    Object.entries(entity.attributes.results)) { res.push([new
+                    Date(key).getTime(), value]); } return res.sort((a, b) => { return a[0] -
+                    b[0]  })
+                  show:
+                    in_header: raw
+                - entity: predbat.best_charge_limit_kw
+                  stroke_width: 1
+                  curve: stepline
+                  name: charge_limit_best
+                  data_generator: >
+                    let res = []; for (const [key, value] of
+                    Object.entries(entity.attributes.results)) { res.push([new
+                    Date(key).getTime(), value]); } return res.sort((a, b) => { return a[0] -
+                    b[0]  })
+                  show:
+                    in_header: raw
+                - entity: predbat.charge_limit_kw
+                  stroke_width: 1
+                  curve: stepline
+                  name: charge_limit_base
+                  data_generator: >
+                    let res = []; for (const [key, value] of
+                    Object.entries(entity.attributes.results)) { res.push([new
+                    Date(key).getTime(), value]); } return res.sort((a, b) => { return a[0] -
+                    b[0]  })
+                  show:
+                    in_header: raw
+                - entity: predbat.best_discharge_limit_kw
+                  stroke_width: 1
+                  curve: stepline
+                  name: discharge_best
+                  data_generator: >
+                    let res = []; for (const [key, value] of
+                    Object.entries(entity.attributes.results)) { res.push([new
+                    Date(key).getTime(), value]); } return res.sort((a, b) => { return a[0] -
+                    b[0]  })
+                  show:
+                    in_header: raw
+                - entity: predbat.record
+                  stroke_width: 2
+                  curve: stepline
+                  name: record
+                  type: column
+                  color: black
+                  data_generator: >
+                    let res = []; for (const [key, value] of
+                    Object.entries(entity.attributes.results)) { res.push([new
+                    Date(key).getTime(), value]); } return res.sort((a, b) => { return a[0] -
+                    b[0]  })
+                  show:
+                    in_header: raw
+                - entity: predbat.soc_kw_base10
+                  stroke_width: 1
+                  curve: smooth
+                  name: base10
+                  data_generator: >
+                    let res = []; for (const [key, value] of
+                    Object.entries(entity.attributes.results)) { res.push([new
+                    Date(key).getTime(), value]); } return res.sort((a, b) => { return a[0] -
+                    b[0]  })
+                  show:
+                    in_header: raw
+            - type: custom:apexcharts-card
+              header:
+                show: true
+                title: Energy rates
+                show_states: true
+                colorize_states: true
+              graph_span: 48h
+              span:
+                start: minute
+                offset: '-12h'
+              now:
+                show: true
+              yaxis:
+                - min: 0
+                  max: 50
+              series:
+                  - entity: predbat.grid_power_best
+                    name: power
+                    stroke_width: 1
+                    type: area
+                    opacity: 0.2
+                    data_generator: >
+                      let res = []; for (const [key, value] of
+                      Object.entries(entity.attributes.results)) { res.push([new
+                      Date(key).getTime(), value*5]); } return res.sort((a, b) => { return a[0]
+                      - b[0]  })
+                  - entity: predbat.rates
+                    attribute: threshold
+                    name: Low threshold
+                    curve: stepline
+                    stroke_width: 2
+                  - entity: predbat.rates_export
+                    attribute: threshold
+                    name: High threshold
+                    curve: stepline
+                    stroke_width: 2
+                  - entity: predbat.rates
+                    stroke_width: 2
+                    curve: stepline
+                    name: import
+                    data_generator: >
+                      let res = []; for (const [key, value] of
+                      Object.entries(entity.attributes.results)) { res.push([new
+                      Date(key).getTime(), value]); } return res.sort((a, b) => { return a[0] -
+                      b[0]  })
+                    show:
+                      in_header: raw
+                  - entity: predbat.rates_export
+                    stroke_width: 1
+                    type: area
+                    opacity: 0.2
+                    curve: stepline
+                    name: export
+                    data_generator: >
+                      let res = []; for (const [key, value] of
+                      Object.entries(entity.attributes.results)) { res.push([new
+                      Date(key).getTime(), value]); } return res.sort((a, b) => { return a[0] -
+                      b[0]  })
+                    show:
+                      in_header: raw
+        - title: hide
+          cards:
+            - type: custom:apexcharts-card  
+              header:
+                show: true
+                title: Power
+                show_states: true
+                colorize_states: true
+              graph_span: 48h
+              span:
+                start: minute
+                offset: '-0h'
+              now:
+                show: true
+              series:
+                - entity: predbat.battery_power_best
+                  stroke_width: 1
+                  curve: smooth
+                  name: battery best
+                  unit: w
+                  data_generator: >
+                    let res = []; for (const [key, value] of
+                    Object.entries(entity.attributes.results)) { res.push([new
+                    Date(key).getTime(), value*1000.0]); } return res.sort((a, b) => { return
+                    a[0] - b[0]  })
+                - entity: predbat.pv_power_best
+                  stroke_width: 1
+                  curve: smooth
+                  name: pv best
+                  unit: w
+                  data_generator: >
+                    let res = []; for (const [key, value] of
+                    Object.entries(entity.attributes.results)) { res.push([new
+                    Date(key).getTime(), value*1000.0]); } return res.sort((a, b) => { return
+                    a[0] - b[0]  })
+                - entity: predbat.grid_power_best
+                  stroke_width: 1
+                  curve: smooth
+                  name: grid best
+                  unit: w
+                  data_generator: >
+                    let res = []; for (const [key, value] of
+                    Object.entries(entity.attributes.results)) { res.push([new
+                    Date(key).getTime(), value*1000.0]); } return res.sort((a, b) => { return
+                    a[0] - b[0]  })
+                - entity: predbat.load_power_best
+                  stroke_width: 1
+                  curve: smooth
+                  name: load best
+                  unit: w
+                  data_generator: >
+                    let res = []; for (const [key, value] of
+                    Object.entries(entity.attributes.results)) { res.push([new
+                    Date(key).getTime(), value*1000.0]); } return res.sort((a, b) => { return
+                    a[0] - b[0]  }) 
+
+            - type: custom:apexcharts-card
+              header:
+                show: true
+                title: Calibration
+                show_states: true
+                colorize_states: true
+              graph_span: 48h
+              span:
+                start: minute
+                offset: '-36h'
+              now:
+                show: true
+              yaxis:
+                - min: 0
+              series:
+                - entity: predbat.soc_kw_h0
+                  stroke_width: 1
+                  curve: smooth
+                  name: actual
+                  extend_to: now
+                  show:
+                    in_header: raw
+                - entity: predbat.soc_kw_best_h1
+                  stroke_width: 1
+                  curve: smooth
+                  name: h1
+                  offset: '-1h'
+                  show:
+                    in_header: raw
+                - entity: predbat.soc_kw_best_h8
+                  stroke_width: 1
+                  curve: smooth
+                  name: h8
+                  offset: '-8h'
+                  show:
+                    in_header: raw
+                - entity: predbat.soc_kw_best_h12
+                  stroke_width: 1
+                  curve: smooth
+                  name: h12
+                  offset: '-12h'
+                  show:
+                    in_header: raw
+        - title: hide
+          cards:
+            - type: custom:apexcharts-card
+              header:
+                show: true
+                title: Home cost prediction
+                show_states: true
+                colorize_states: true
+              graph_span: 48h
+              span:
+                start: day
+                offset: +0h
+              now:
+                show: true
+              series:
+                - entity: predbat.metric
+                  stroke_width: 1
+                  curve: smooth
+                  name: base
+                  data_generator: >
+                    let res = []; for (const [key, value] of
+                    Object.entries(entity.attributes.results)) { res.push([new
+                    Date(key).getTime(), value]); } return res.sort((a, b) => { return a[0] -
+                    b[0]  })
+                  show:
+                    in_header: raw
+                - entity: predbat.best_metric
+                  stroke_width: 2
+                  curve: smooth
+                  name: best
+                  data_generator: >
+                    let res = []; for (const [key, value] of
+                    Object.entries(entity.attributes.results)) { res.push([new
+                    Date(key).getTime(), value]); } return res.sort((a, b) => { return a[0] -
+                    b[0]  })
+                  show:
+                    in_header: raw
+                - entity: predbat.best10_metric
+                  stroke_width: 1
+                  curve: smooth
+                  name: best10
+                  data_generator: >
+                    let res = []; for (const [key, value] of
+                    Object.entries(entity.attributes.results)) { res.push([new
+                    Date(key).getTime(), value]); } return res.sort((a, b) => { return a[0] -
+                    b[0]  })
+                  show:
+                    in_header: raw
+                - entity: predbat.cost_today
+                  stroke_width: 1
+                  curve: smooth
+                  name: actual
+                  extend_to: now
+                  data_generator: >
+                    let res = []; for (const [key, value] of
+                    Object.entries(entity.attributes.results)) { res.push([new
+                    Date(key).getTime(), value]); } return res.sort((a, b) => { return a[0] -
+                    b[0]  })
+                  show:
+                    in_header: raw
+                - entity: predbat.cost_today_import
+                  stroke_width: 1
+                  curve: smooth
+                  name: actual_import
+                  extend_to: now
+                  data_generator: >
+                    let res = []; for (const [key, value] of
+                    Object.entries(entity.attributes.results)) { res.push([new
+                    Date(key).getTime(), value]); } return res.sort((a, b) => { return a[0] -
+                    b[0]  })
+                  show:
+                    in_header: raw
+                - entity: predbat.cost_today_export
+                  stroke_width: 1
+                  curve: smooth
+                  name: actual_export
+                  extend_to: now
+                  data_generator: >
+                    let res = []; for (const [key, value] of
+                    Object.entries(entity.attributes.results)) { res.push([new
+                    Date(key).getTime(), -value]); } return res.sort((a, b) => { return a[0] -
+                    b[0]  })
+                  show:
+                    in_header: raw
+                - entity: predbat.base10_metric
+                  stroke_width: 1
+                  curve: smooth
+                  name: base10
+                  data_generator: >
+                    let res = []; for (const [key, value] of
+                    Object.entries(entity.attributes.results)) { res.push([new
+                    Date(key).getTime(), value]); } return res.sort((a, b) => { return a[0] -
+                    b[0]  })
+                  show:
+                    in_header: raw
+  
+
