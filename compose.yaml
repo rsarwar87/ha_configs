@@ -1,79 +1,5 @@
 services:
 
-  Grafana:
-
-    cap_drop:
-      - "AUDIT_CONTROL"
-      - "BLOCK_SUSPEND"
-      - "DAC_READ_SEARCH"
-      - "IPC_LOCK"
-      - "IPC_OWNER"
-      - "LEASE"
-      - "LINUX_IMMUTABLE"
-      - "MAC_ADMIN"
-      - "MAC_OVERRIDE"
-      - "NET_ADMIN"
-      - "NET_BROADCAST"
-      - "SYSLOG"
-      - "SYS_ADMIN"
-      - "SYS_BOOT"
-      - "SYS_MODULE"
-      - "SYS_NICE"
-      - "SYS_PACCT"
-      - "SYS_PTRACE"
-      - "SYS_RAWIO"
-      - "SYS_RESOURCE"
-      - "SYS_TIME"
-      - "SYS_TTY_CONFIG"
-      - "WAKE_ALARM"
-
-    container_name: "Grafana"
-
-    entrypoint:
-      - "/run.sh"
-
-    environment:
-      - "TZ=Europe/London"
-      - "PATH=/usr/share/grafana/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-      - "GF_PATHS_CONFIG=/etc/grafana/grafana.ini"
-      - "GF_PATHS_DATA=/var/lib/grafana"
-      - "GF_PATHS_HOME=/usr/share/grafana"
-      - "GF_PATHS_LOGS=/var/log/grafana"
-      - "GF_PATHS_PLUGINS=/var/lib/grafana/plugins"
-      - "GF_PATHS_PROVISIONING=/etc/grafana/provisioning"
-
-    hostname: "hassist"
-
-    image: "grafana/grafana:latest"
-
-    ipc: "private"
-
-    labels:
-      maintainer: "Grafana Labs <hello@grafana.com>"
-
-    logging:
-      driver: "json-file"
-      options: {}
-
-    network_mode: "host"
-
-    ports:
-      - "3000:3000/tcp"
-
-    privileged: true
-
-    restart: "always"
-
-    security_opt:
-      - "label=disable"
-
-    user: "472"
-
-    volumes:
-      - "/var/lib/grafana:/wkspace/homeassistant/grafana"
-
-    working_dir: "/usr/share/grafana"
-
   appdaemon:
 
     cap_drop:
@@ -120,9 +46,9 @@ services:
     expose:
       - "5050/tcp"
 
-    hostname: "hassist"
+    hostname: "asusmini"
 
-    image: "acockburn/appdaemon:latest"
+    image: "docker.io/acockburn/appdaemon:latest"
 
     ipc: "private"
 
@@ -151,12 +77,13 @@ services:
 
     volumes:
       - "/etc/localtime:/etc/localtime"
-      - "/wkspace/homeassistant/appdaemon/cert:/certs"
-      - "/wkspace/homeassistant/main:/conf"
+      - "/wkspace/homeassistant/config_new/appdaemon/cert:/certs"
+      - "/wkspace/homeassistant/config_new/appdaemon:/conf"
+      - "/wkspace/homeassistant/config_new:/config"
 
     working_dir: "/usr/src/app"
 
-  givtcp:
+  giv_tcp:
 
     cap_drop:
       - "AUDIT_CONTROL"
@@ -187,7 +114,7 @@ services:
       - "python3"
       - "/app/startup.py"
 
-    container_name: "givtcp"
+    container_name: "giv_tcp"
 
     environment:
 
@@ -263,11 +190,11 @@ services:
 
       - "INFLUX_URL=http://192.168.1.250:8086/"
 
-      - "INFLUX_TOKEN=PBHjhnfnof7fN-M9BcEBY3j2vKooM73BgJQzpL3qAUUMnZK8y1nOVao1KIVn8vbH5_3xntCqIN6z5AXN_vMZgQ=="
+      - "INFLUX_TOKEN=GcL6Vp6orV9CT2mtPdy8C-BIsxng_hBTiFpb0SzOh4sMaAM3sGeV3xgjYE4-8jPWhakVjS6ah3g8uGUAi6MDqw=="
 
-      - "INFLUX_BUCKET=homeassistant"
+      - "INFLUX_BUCKET=givtcp"
 
-      - "INFLUX_ORG=homeassistant"
+      - "INFLUX_ORG=homeassist"
 
       - "HA_AUTO_D=True"
 
@@ -285,7 +212,7 @@ services:
 
       - "EXPORTRATE=0.19"
 
-      - "HOSTIP=192.168.1.187"
+      - "HOSTIP=192.168.1.250"
 
       - "DYNAMICTARIFF=False"
 
@@ -331,17 +258,22 @@ services:
 
       - "LOAD_HIST_WEIGHT=1"
 
+      - "MQTT_RETAIN=False"
+
+      - "EVC_ENABLE=False"
+
+      - "EVC_IP_ADDRESS="
+
+      - "EVC_SELF_RUN_TIMER=5"
+
     expose:
       - "1883/tcp"
-      - "3000/tcp"
-      - "5173/tcp"
-      - "6345/tcp"
       - "6379/tcp"
-      - "9181/tcp"
+      - "8099/tcp"
 
-    hostname: "hassist"
+    hostname: "asusmini"
 
-    image: "britkat/giv_tcp-ma:latest"
+    image: "docker.io/britkat/giv_tcp-ma:latest"
 
     ipc: "private"
 
@@ -357,10 +289,13 @@ services:
 
     security_opt:
       - "label=disable"
+
+    volumes:
+      - "/config:/wkspace/homeassistant/giv_tcp"
 
     working_dir: "/app"
 
-  home-assistant:
+  grafana:
 
     cap_drop:
       - "AUDIT_CONTROL"
@@ -387,210 +322,7 @@ services:
       - "SYS_TTY_CONFIG"
       - "WAKE_ALARM"
 
-    container_name: "home-assistant"
-
-    entrypoint:
-      - "/init"
-
-    environment:
-      - "TZ=Europe/London"
-      - "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-      - "LANG=C.UTF-8"
-      - "S6_BEHAVIOUR_IF_STAGE2_FAILS=2"
-      - "S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0"
-      - "S6_CMD_WAIT_FOR_SERVICES=1"
-      - "S6_SERVICES_READYTIME=50"
-      - "WHEELS_LINKS=https://wheels.home-assistant.io/musllinux/"
-      - "S6_SERVICES_GRACETIME=220000"
-
-    hostname: "hassist"
-
-    image: "homeassistant/home-assistant:latest"
-
-    ipc: "private"
-
-    labels:
-      io.hass.arch: "aarch64"
-      io.hass.base.arch: "aarch64"
-      io.hass.base.image: "ghcr.io/home-assistant/aarch64-base:3.18"
-      io.hass.base.name: "python"
-      io.hass.base.version: "2023.08.0"
-      io.hass.type: "core"
-      io.hass.version: "2023.9.2"
-      org.opencontainers.image.authors: "The Home Assistant Authors"
-      org.opencontainers.image.created: "2023-09-12 19:46:55+00:00"
-      org.opencontainers.image.description: "Open-source home automation platform running on Python 3"
-      org.opencontainers.image.documentation: "https://www.home-assistant.io/docs/"
-      org.opencontainers.image.licenses: "Apache License 2.0"
-      org.opencontainers.image.source: "https://github.com/home-assistant/core"
-      org.opencontainers.image.title: "Home Assistant"
-      org.opencontainers.image.url: "https://www.home-assistant.io/"
-      org.opencontainers.image.version: "2023.9.2"
-
-    logging:
-      driver: "json-file"
-      options: {}
-
-    network_mode: "host"
-
-    ports:
-      - "8123:8123/tcp"
-
-    privileged: true
-
-    restart: "always"
-
-    security_opt:
-      - "label=disable"
-
-    volumes:
-      - "/wkspace/homeassistant/main:/config"
-
-    working_dir: "/config"
-
-  influxdb2:
-
-    cap_drop:
-      - "AUDIT_CONTROL"
-      - "BLOCK_SUSPEND"
-      - "DAC_READ_SEARCH"
-      - "IPC_LOCK"
-      - "IPC_OWNER"
-      - "LEASE"
-      - "LINUX_IMMUTABLE"
-      - "MAC_ADMIN"
-      - "MAC_OVERRIDE"
-      - "NET_ADMIN"
-      - "NET_BROADCAST"
-      - "SYSLOG"
-      - "SYS_ADMIN"
-      - "SYS_BOOT"
-      - "SYS_MODULE"
-      - "SYS_NICE"
-      - "SYS_PACCT"
-      - "SYS_PTRACE"
-      - "SYS_RAWIO"
-      - "SYS_RESOURCE"
-      - "SYS_TIME"
-      - "SYS_TTY_CONFIG"
-      - "WAKE_ALARM"
-
-    command:
-      - "influxd"
-
-    container_name: "influxdb2"
-
-    entrypoint:
-      - "/entrypoint.sh"
-
-    environment:
-      - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-      - "CARGO_NET_GIT_FETCH_WITH_CLI=true"
-      - "DEBIAN_FRONTEND=noninteractive"
-      - "HOME=/root"
-      - "LANG=C.UTF-8"
-      - "PIP_DISABLE_PIP_VERSION_CHECK=1"
-      - "PIP_NO_CACHE_DIR=1"
-      - "PIP_PREFER_BINARY=1"
-      - "PYTHONDONTWRITEBYTECODE=1"
-      - "PYTHONUNBUFFERED=1"
-      - "S6_BEHAVIOUR_IF_STAGE2_FAILS=2"
-      - "S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0"
-      - "S6_CMD_WAIT_FOR_SERVICES=1"
-      - "YARN_HTTP_TIMEOUT=1000000"
-      - "TERM=xterm-256color"
-      - "GOSU_VER=1.12"
-      - "INFLUXDB_VERSION=2.0.9"
-      - "INFLUX_CONFIGS_PATH=/etc/influxdb2/influx-configs"
-      - "INFLUXD_INIT_PORT=9999"
-      - "INFLUXD_INIT_PING_ATTEMPTS=600"
-      - "DOCKER_INFLUXDB_INIT_CLI_CONFIG_NAME=default"
-      - "INFLUX_CLI_VERSION=2.7.3"
-      - "TZ=Europe/London"
-
-    hostname: "hassist"
-
-    image: "influxdb:2.0"
-
-    ipc: "private"
-
-    labels:
-      io.hass.arch: "aarch64"
-      io.hass.base.image: "hassioaddons/debian-base"
-      io.hass.base.name: "debian"
-      io.hass.base.version: "6.2.7"
-      io.hass.description: "Scalable datastore for metrics, events, and real-time analytics"
-      io.hass.name: "InfluxDB"
-      io.hass.type: "addon"
-      io.hass.version: "4.7.0"
-      maintainer: "Franck Nijhof <frenck@addons.community>"
-      org.opencontainers.image.authors: "Franck Nijhof <frenck@addons.community>"
-      org.opencontainers.image.created: "2023-05-21T14:48:39Z"
-      org.opencontainers.image.description: "Scalable datastore for metrics, events, and real-time analytics"
-      org.opencontainers.image.documentation: "https://github.com/hassio-addons/addon-influxdb/blob/main/README.md"
-      org.opencontainers.image.licenses: "MIT"
-      org.opencontainers.image.revision: "b0c6954d3c875411289d8649b9c3f3269a38534d"
-      org.opencontainers.image.source: "https://github.com/hassio-addons/addon-influxdb"
-      org.opencontainers.image.title: "InfluxDB"
-      org.opencontainers.image.url: "https://addons.community"
-      org.opencontainers.image.vendor: "Home Assistant Community Add-ons"
-      org.opencontainers.image.version: "4.7.0"
-
-    logging:
-      driver: "json-file"
-      options: {}
-
-    network_mode: "host"
-
-    ports:
-      - "8083:8083/tcp"
-      - "8086:8086/tcp"
-
-    privileged: true
-
-    restart: "always"
-
-    security_opt:
-      - "label=disable"
-
-    volumes:
-      - "/wkspace/homeassistant/influxdb2/data:/data"
-      - "/wkspace/homeassistant/influxdb2/etc:/etc/influxdb2"
-      - "/wkspace/homeassistant/influxdb2:/var/lib/influxdb2"
-
-
-version: "3.6"
-
-services:
-
-  Grafana:
-
-    cap_drop:
-      - "AUDIT_CONTROL"
-      - "BLOCK_SUSPEND"
-      - "DAC_READ_SEARCH"
-      - "IPC_LOCK"
-      - "IPC_OWNER"
-      - "LEASE"
-      - "LINUX_IMMUTABLE"
-      - "MAC_ADMIN"
-      - "MAC_OVERRIDE"
-      - "NET_ADMIN"
-      - "NET_BROADCAST"
-      - "SYSLOG"
-      - "SYS_ADMIN"
-      - "SYS_BOOT"
-      - "SYS_MODULE"
-      - "SYS_NICE"
-      - "SYS_PACCT"
-      - "SYS_PTRACE"
-      - "SYS_RAWIO"
-      - "SYS_RESOURCE"
-      - "SYS_TIME"
-      - "SYS_TTY_CONFIG"
-      - "WAKE_ALARM"
-
-    container_name: "Grafana"
+    container_name: "grafana"
 
     entrypoint:
       - "/run.sh"
@@ -604,10 +336,19 @@ services:
       - "GF_PATHS_LOGS=/var/log/grafana"
       - "GF_PATHS_PLUGINS=/var/lib/grafana/plugins"
       - "GF_PATHS_PROVISIONING=/etc/grafana/provisioning"
+      - "GF_SECURITY_ALLOW_EMBEDDING=true"
+      - "GF_AUTH_ANONYMOUS_ENABLED=true"
+      - "GF_AUTH_DISABLE_LOGIN_FORM=true"
+      - "GF_AUTH_ANONYMOUS_ORG_ROLE=Admin"
+      - "GF_SERVER_DOMAIN=connectify29.asuscomm.com"
+      - "GF_SERVER_CERT_FILE=/certs/cert.pem"
+      - "GF_SERVER_CERT_KEY=/certs/key.pem"
+      - "GF_SERVER_ENFORCE_DOMAIN=false"
+      - "GF_SERVER_PROTOCOL=https"
 
-    hostname: "hassist"
+    hostname: "asusmini"
 
-    image: "grafana/grafana:latest"
+    image: "docker.io/grafana/grafana:latest"
 
     ipc: "private"
 
@@ -633,295 +374,12 @@ services:
     user: "472"
 
     volumes:
-      - "/var/lib/grafana:/wkspace/homeassistant/grafana"
+      - "/wkspace/homeassistant/config_new/cert:/certs"
+      - "/wkspace/homeassistant/grafana/etc:/etc/grafana"
+      - "/wkspace/homeassistant/grafana/usr/grafana:/usr/share/grafana"
+      - "/wkspace/homeassistant/grafana/var/grafana:/var/lib/grafana"
 
     working_dir: "/usr/share/grafana"
-
-  appdaemon:
-
-    cap_drop:
-      - "AUDIT_CONTROL"
-      - "BLOCK_SUSPEND"
-      - "DAC_READ_SEARCH"
-      - "IPC_LOCK"
-      - "IPC_OWNER"
-      - "LEASE"
-      - "LINUX_IMMUTABLE"
-      - "MAC_ADMIN"
-      - "MAC_OVERRIDE"
-      - "NET_ADMIN"
-      - "NET_BROADCAST"
-      - "SYSLOG"
-      - "SYS_ADMIN"
-      - "SYS_BOOT"
-      - "SYS_MODULE"
-      - "SYS_NICE"
-      - "SYS_PACCT"
-      - "SYS_PTRACE"
-      - "SYS_RAWIO"
-      - "SYS_RESOURCE"
-      - "SYS_TIME"
-      - "SYS_TTY_CONFIG"
-      - "WAKE_ALARM"
-
-    container_name: "appdaemon"
-
-    entrypoint:
-      - "./dockerStart.sh"
-
-    environment:
-      - "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-      - "LANG=C.UTF-8"
-      - "GPG_KEY=A035C8C19219BA821ECEA86B64E628F8D684696D"
-      - "PYTHON_VERSION=3.10.11"
-      - "PYTHON_PIP_VERSION=23.0.1"
-      - "PYTHON_SETUPTOOLS_VERSION=65.5.1"
-      - "PYTHON_GET_PIP_URL=https://github.com/pypa/get-pip/raw/d5cb0afaf23b8520f1bbcfed521017b4a95f5c01/public/get-pip.py"
-      - "PYTHON_GET_PIP_SHA256=394be00f13fa1b9aaa47e911bdb59a09c3b2986472130f30aa0bfaf7f3980637"
-      - "PYTHONPATH=/usr/lib/python3.10:/usr/lib/python3.10/site-packages"
-
-    expose:
-      - "5050/tcp"
-
-    hostname: "hassist"
-
-    image: "acockburn/appdaemon:latest"
-
-    ipc: "private"
-
-    labels:
-      org.opencontainers.image.created: "2023-04-16T18:25:45.589Z"
-      org.opencontainers.image.description: ":page_facing_up: Python Apps for Home Automation"
-      org.opencontainers.image.licenses: "NOASSERTION"
-      org.opencontainers.image.revision: "16506f3264373fca9fd5ad676741d53c6ccfe02d"
-      org.opencontainers.image.source: "https://github.com/AppDaemon/appdaemon"
-      org.opencontainers.image.title: "appdaemon"
-      org.opencontainers.image.url: "https://github.com/AppDaemon/appdaemon"
-      org.opencontainers.image.version: "4.4.2"
-
-    logging:
-      driver: "json-file"
-      options: {}
-
-    network_mode: "host"
-
-    privileged: true
-
-    restart: "always"
-
-    security_opt:
-      - "label=disable"
-
-    volumes:
-      - "/etc/localtime:/etc/localtime"
-      - "/wkspace/homeassistant/appdaemon/cert:/certs"
-      - "/wkspace/homeassistant/main:/conf"
-
-    working_dir: "/usr/src/app"
-
-  givtcp:
-
-    cap_drop:
-      - "AUDIT_CONTROL"
-      - "BLOCK_SUSPEND"
-      - "DAC_READ_SEARCH"
-      - "IPC_LOCK"
-      - "IPC_OWNER"
-      - "LEASE"
-      - "LINUX_IMMUTABLE"
-      - "MAC_ADMIN"
-      - "MAC_OVERRIDE"
-      - "NET_ADMIN"
-      - "NET_BROADCAST"
-      - "SYSLOG"
-      - "SYS_ADMIN"
-      - "SYS_BOOT"
-      - "SYS_MODULE"
-      - "SYS_NICE"
-      - "SYS_PACCT"
-      - "SYS_PTRACE"
-      - "SYS_RAWIO"
-      - "SYS_RESOURCE"
-      - "SYS_TIME"
-      - "SYS_TTY_CONFIG"
-      - "WAKE_ALARM"
-
-    command:
-      - "python3"
-      - "/app/startup.py"
-
-    container_name: "givtcp"
-
-    environment:
-
-      - "INVERTOR_IP=192.168.1.120"
-
-      - "MQTT_OUTPUT=True"
-
-      - "MQTT_ADDRESS=192.168.1.250"
-
-      - "MQTT_USERNAME=mqttuser"
-
-      - "MQTT_PASSWORD=mqttuser"
-
-      - "MQTT_TOPIC=GIV"
-
-      - "PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-
-      - "LANG=C.UTF-8"
-
-      - "GPG_KEY=A035C8C19219BA821ECEA86B64E628F8D684696D"
-
-      - "PYTHON_VERSION=3.10.0rc2"
-
-      - "PYTHON_PIP_VERSION=21.2.4"
-
-      - "PYTHON_SETUPTOOLS_VERSION=57.5.0"
-
-      - "PYTHON_GET_PIP_URL=https://github.com/pypa/get-pip/raw/c20b0cfd643cd4a19246ccf204e2997af70f6b21/public/get-pip.py"
-
-      - "PYTHON_GET_PIP_SHA256=fa6f3fb93cce234cd4e8dd2beb54a51ab9c247653b52855a48dd44e6b21ff28b"
-
-      - "NUMINVERTORS=1"
-
-      - "INVERTOR_IP_1=192.168.1.120"
-
-      - "NUMBATTERIES_1=1"
-
-      - "INVERTOR_AIO_1=False"
-
-      - "INVERTOR_AC_1=True"
-
-      - "INVERTOR_IP_2="
-
-      - "NUMBATTERIES_2=1"
-
-      - "INVERTOR_AIO_2=False"
-
-      - "INVERTOR_AC_2=True"
-
-      - "INVERTOR_IP_3="
-
-      - "NUMBATTERIES_3=1"
-
-      - "INVERTOR_AIO_3=False"
-
-      - "INVERTOR_AC_3=True"
-
-      - "MQTT_TOPIC_2="
-
-      - "MQTT_TOPIC_3="
-
-      - "MQTT_PORT=1883"
-
-      - "LOG_LEVEL=Info"
-
-      - "PRINT_RAW=True"
-
-      - "SELF_RUN=True"
-
-      - "SELF_RUN_LOOP_TIMER=10"
-
-      - "INFLUX_OUTPUT=True"
-
-      - "INFLUX_URL=http://192.168.1.250:8086/"
-
-      - "INFLUX_TOKEN=PBHjhnfnof7fN-M9BcEBY3j2vKooM73BgJQzpL3qAUUMnZK8y1nOVao1KIVn8vbH5_3xntCqIN6z5AXN_vMZgQ=="
-
-      - "INFLUX_BUCKET=homeassistant"
-
-      - "INFLUX_ORG=homeassistant"
-
-      - "HA_AUTO_D=True"
-
-      - "HADEVICEPREFIX=GivTCP"
-
-      - "HADEVICEPREFIX_2=GivTCP2"
-
-      - "HADEVICEPREFIX_3=GivTCP3"
-
-      - "PYTHONPATH=/app"
-
-      - "DAYRATE=0.31"
-
-      - "NIGHTRATE=0.18"
-
-      - "EXPORTRATE=0.19"
-
-      - "HOSTIP=192.168.1.187"
-
-      - "DYNAMICTARIFF=False"
-
-      - "DAYRATESTART=04:30"
-
-      - "NIGHTRATESTART=02:30"
-
-      - "TZ=Europe/London"
-
-      - "WEB_DASH=False"
-
-      - "WEB_DASH_PORT=3042"
-
-      - "CACHELOCATION=/config/GivTCP"
-
-      - "DATASMOOTHER=low"
-
-      - "QUEUE_RETRIES=2"
-
-      - "SMARTTARGET=False"
-
-      - "GEAPI=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5NTc3MDIxOS1jYWE2LTRmOTctOTE3Ni0zNDBlZGMzZDQxNTgiLCJqdGkiOiIwZTg5ZTE0YzgxYzZlYTE0MzZkNjcwNmMyN2U1ZmI3M2ZhZjRjNjUyMjE0ODE3NjBjNmE4ODlmMmIxMDkzMmMwZWRkYTM1OTRiNTVkYjQ5ZiIsImlhdCI6MTY5NDk3OTk0OS43MDk4NzksIm5iZiI6MTY5NDk3OTk0OS43MDk4ODMsImV4cCI6MzI1MDM2ODAwMDAuMDA2ODk3LCJzdWIiOiI1MDc3MyIsInNjb3BlcyI6WyJhcGkiXX0.n2TckWJkHE01iOnpC_EJXMUH8-pA5MAEfNwvK5fFMabCC_N1cg1Br2PvjoVojOSEAzdGtR_oVfkTjLXazYQWJQ"
-
-      - "SOLCASTAPI=UshRdalRl645kE6rz8FuxLoN62WAGrMd"
-
-      - "SOLCASTSITEID=596f-0b2e-7b99-95ff"
-
-      - "SOLCASTSITEID2="
-
-      - "PALM_WINTER=01,02,03,10,11,12"
-
-      - "PALM_SHOULDER=04,05,09"
-
-      - "PALM_MIN_SOC_TARGET=25"
-
-      - "PALM_MAX_SOC_TARGET=45"
-
-      - "PALM_BATT_RESERVE=4"
-
-      - "PALM_BATT_UTILISATION=0.85"
-
-      - "PALM_WEIGHT=35"
-
-      - "LOAD_HIST_WEIGHT=1"
-
-    expose:
-      - "1883/tcp"
-      - "3000/tcp"
-      - "5173/tcp"
-      - "6345/tcp"
-      - "6379/tcp"
-      - "9181/tcp"
-
-    hostname: "hassist"
-
-    image: "britkat/giv_tcp-ma:latest"
-
-    ipc: "private"
-
-    logging:
-      driver: "json-file"
-      options: {}
-
-    network_mode: "host"
-
-    privileged: true
-
-    restart: "always"
-
-    security_opt:
-      - "label=disable"
-
-    working_dir: "/app"
 
   home-assistant:
 
@@ -966,29 +424,29 @@ services:
       - "WHEELS_LINKS=https://wheels.home-assistant.io/musllinux/"
       - "S6_SERVICES_GRACETIME=220000"
 
-    hostname: "hassist"
+    hostname: "asusmini"
 
-    image: "homeassistant/home-assistant:latest"
+    image: "docker.io/homeassistant/home-assistant:latest"
 
     ipc: "private"
 
     labels:
-      io.hass.arch: "aarch64"
-      io.hass.base.arch: "aarch64"
-      io.hass.base.image: "ghcr.io/home-assistant/aarch64-base:3.18"
+      io.hass.arch: "amd64"
+      io.hass.base.arch: "amd64"
+      io.hass.base.image: "ghcr.io/home-assistant/amd64-base:3.18"
       io.hass.base.name: "python"
-      io.hass.base.version: "2023.08.0"
+      io.hass.base.version: "2023.09.0"
       io.hass.type: "core"
-      io.hass.version: "2023.9.2"
+      io.hass.version: "2023.10.0"
       org.opencontainers.image.authors: "The Home Assistant Authors"
-      org.opencontainers.image.created: "2023-09-12 19:46:55+00:00"
+      org.opencontainers.image.created: "2023-10-04 16:12:56+00:00"
       org.opencontainers.image.description: "Open-source home automation platform running on Python 3"
       org.opencontainers.image.documentation: "https://www.home-assistant.io/docs/"
       org.opencontainers.image.licenses: "Apache License 2.0"
       org.opencontainers.image.source: "https://github.com/home-assistant/core"
       org.opencontainers.image.title: "Home Assistant"
       org.opencontainers.image.url: "https://www.home-assistant.io/"
-      org.opencontainers.image.version: "2023.9.2"
+      org.opencontainers.image.version: "2023.10.0"
 
     logging:
       driver: "json-file"
@@ -1007,7 +465,7 @@ services:
       - "label=disable"
 
     volumes:
-      - "/wkspace/homeassistant/main:/config"
+      - "/wkspace/homeassistant/config_new:/config"
 
     working_dir: "/config"
 
@@ -1047,57 +505,22 @@ services:
       - "/entrypoint.sh"
 
     environment:
+      - "TZ=Europe/London"
       - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-      - "CARGO_NET_GIT_FETCH_WITH_CLI=true"
-      - "DEBIAN_FRONTEND=noninteractive"
-      - "HOME=/root"
-      - "LANG=C.UTF-8"
-      - "PIP_DISABLE_PIP_VERSION_CHECK=1"
-      - "PIP_NO_CACHE_DIR=1"
-      - "PIP_PREFER_BINARY=1"
-      - "PYTHONDONTWRITEBYTECODE=1"
-      - "PYTHONUNBUFFERED=1"
-      - "S6_BEHAVIOUR_IF_STAGE2_FAILS=2"
-      - "S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0"
-      - "S6_CMD_WAIT_FOR_SERVICES=1"
-      - "YARN_HTTP_TIMEOUT=1000000"
-      - "TERM=xterm-256color"
       - "GOSU_VER=1.12"
       - "INFLUXDB_VERSION=2.0.9"
       - "INFLUX_CONFIGS_PATH=/etc/influxdb2/influx-configs"
       - "INFLUXD_INIT_PORT=9999"
       - "INFLUXD_INIT_PING_ATTEMPTS=600"
       - "DOCKER_INFLUXDB_INIT_CLI_CONFIG_NAME=default"
-      - "INFLUX_CLI_VERSION=2.7.3"
-      - "TZ=Europe/London"
+      - "INFLUXD_TLS_CERT2=/certi/cert.pem"
+      - "INFLUXD_TLS_KEY2=/certi/key.pem"
 
-    hostname: "hassist"
+    hostname: "asusmini"
 
-    image: "influxdb:2.0"
+    image: "docker.io/influxdb:2.0"
 
     ipc: "private"
-
-    labels:
-      io.hass.arch: "aarch64"
-      io.hass.base.image: "hassioaddons/debian-base"
-      io.hass.base.name: "debian"
-      io.hass.base.version: "6.2.7"
-      io.hass.description: "Scalable datastore for metrics, events, and real-time analytics"
-      io.hass.name: "InfluxDB"
-      io.hass.type: "addon"
-      io.hass.version: "4.7.0"
-      maintainer: "Franck Nijhof <frenck@addons.community>"
-      org.opencontainers.image.authors: "Franck Nijhof <frenck@addons.community>"
-      org.opencontainers.image.created: "2023-05-21T14:48:39Z"
-      org.opencontainers.image.description: "Scalable datastore for metrics, events, and real-time analytics"
-      org.opencontainers.image.documentation: "https://github.com/hassio-addons/addon-influxdb/blob/main/README.md"
-      org.opencontainers.image.licenses: "MIT"
-      org.opencontainers.image.revision: "b0c6954d3c875411289d8649b9c3f3269a38534d"
-      org.opencontainers.image.source: "https://github.com/hassio-addons/addon-influxdb"
-      org.opencontainers.image.title: "InfluxDB"
-      org.opencontainers.image.url: "https://addons.community"
-      org.opencontainers.image.vendor: "Home Assistant Community Add-ons"
-      org.opencontainers.image.version: "4.7.0"
 
     logging:
       driver: "json-file"
@@ -1109,6 +532,186 @@ services:
       - "8083:8083/tcp"
       - "8086:8086/tcp"
 
+    restart: "always"
+
+    volumes:
+      - "/wkspace/homeassistant/config_new/cert:/certi"
+      - "/wkspace/homeassistant/influxdb2/data:/data"
+      - "/wkspace/homeassistant/influxdb2/etc:/etc/influxdb2"
+      - "/wkspace/homeassistant/influxdb2/var:/var/lib/influxdb2"
+
+  jellyfin:
+
+    cap_drop:
+      - "AUDIT_CONTROL"
+      - "BLOCK_SUSPEND"
+      - "DAC_READ_SEARCH"
+      - "IPC_LOCK"
+      - "IPC_OWNER"
+      - "LEASE"
+      - "LINUX_IMMUTABLE"
+      - "MAC_ADMIN"
+      - "MAC_OVERRIDE"
+      - "NET_ADMIN"
+      - "NET_BROADCAST"
+      - "SYSLOG"
+      - "SYS_ADMIN"
+      - "SYS_BOOT"
+      - "SYS_MODULE"
+      - "SYS_NICE"
+      - "SYS_PACCT"
+      - "SYS_PTRACE"
+      - "SYS_RAWIO"
+      - "SYS_RESOURCE"
+      - "SYS_TIME"
+      - "SYS_TTY_CONFIG"
+      - "WAKE_ALARM"
+
+    container_name: "jellyfin"
+
+    entrypoint:
+      - "/init"
+
+    environment:
+      - "PGID=1000"
+      - "TZ=Europe/London"
+      - "PUID=1000"
+      - "PATH=/lsiopy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      - "HOME=/root"
+      - "LANGUAGE=en_US.UTF-8"
+      - "LANG=en_US.UTF-8"
+      - "TERM=xterm"
+      - "S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0"
+      - "S6_VERBOSITY=1"
+      - "S6_STAGE2_HOOK=/docker-mods"
+      - "VIRTUAL_ENV=/lsiopy"
+      - "LSIO_FIRST_PARTY=true"
+      - "NVIDIA_DRIVER_CAPABILITIES=compute,video,utility"
+
+    hostname: "d14335113443"
+
+    image: "docker.io/lscr.io/linuxserver/jellyfin:latest"
+
+    ipc: "private"
+
+    labels:
+      build_version: "Linuxserver.io version:- 10.8.12-1-ls234 Build-date:- 2023-11-21T12:48:29+00:00"
+      com.docker.compose.config-hash: "271261bbf8bff739d3080d6b9c9af4a37e2794b3e19740db582fd11e2baf2b98"
+      com.docker.compose.container-number: "1"
+      com.docker.compose.depends_on: ""
+      com.docker.compose.image: "sha256:b5ab5ecfde68f07735166261b34869f2cd779f55bcbaf857ac1ed9f938841478"
+      com.docker.compose.oneoff: "False"
+      com.docker.compose.project: "jellyfin"
+      com.docker.compose.project.config_files: "/wkspace/homeassistant/jellyfin/compose.yaml"
+      com.docker.compose.project.working_dir: "/wkspace/homeassistant/jellyfin"
+      com.docker.compose.service: "jellyfin"
+      com.docker.compose.version: "2.21.0"
+      maintainer: "thelamer"
+      org.opencontainers.image.authors: "linuxserver.io"
+      org.opencontainers.image.created: "2023-11-21T12:48:29+00:00"
+      org.opencontainers.image.description: "[Jellyfin](https://github.com/jellyfin/jellyfin) is a Free\
+        \ Software Media System that puts you in control of managing and streaming your media. It is an\
+        \ alternative to the proprietary Emby and Plex, to provide media from a dedicated server to end-user\
+        \ devices via multiple apps. Jellyfin is descended from Emby's 3.5.2 release and ported to the\
+        \ .NET Core framework to enable full cross-platform support. There are no strings attached, no\
+        \ premium licenses or features, and no hidden agendas: just a team who want to build something\
+        \ better and work together to achieve it."
+      org.opencontainers.image.documentation: "https://docs.linuxserver.io/images/docker-jellyfin"
+      org.opencontainers.image.licenses: "GPL-3.0-only"
+      org.opencontainers.image.ref.name: "327e8c2671e3746b143a6a3c8f596be27d2b4f1b"
+      org.opencontainers.image.revision: "327e8c2671e3746b143a6a3c8f596be27d2b4f1b"
+      org.opencontainers.image.source: "https://github.com/linuxserver/docker-jellyfin"
+      org.opencontainers.image.title: "Jellyfin"
+      org.opencontainers.image.url: "https://github.com/linuxserver/docker-jellyfin/packages"
+      org.opencontainers.image.vendor: "linuxserver.io"
+      org.opencontainers.image.version: "10.8.12-1-ls234"
+
+    logging:
+      driver: "json-file"
+      options: {}
+
+    network_mode: "host"
+
+    ports:
+      - "1900:1900/udp"
+      - "7359:7359/udp"
+      - "8096:8096/tcp"
+      - "8920:8920/tcp"
+
+    restart: "unless-stopped"
+
+    volumes:
+      - "/wkspace/homeassistant/jellyfin/config:/config"
+      - "/wkspace/homeassistant/jellyfin/movies:/data/movies"
+      - "/wkspace/homeassistant/jellyfin/tvshows:/data/tvshows"
+
+    working_dir: "/"
+
+  mqtt:
+
+    cap_drop:
+      - "AUDIT_CONTROL"
+      - "BLOCK_SUSPEND"
+      - "DAC_READ_SEARCH"
+      - "IPC_LOCK"
+      - "IPC_OWNER"
+      - "LEASE"
+      - "LINUX_IMMUTABLE"
+      - "MAC_ADMIN"
+      - "MAC_OVERRIDE"
+      - "NET_ADMIN"
+      - "NET_BROADCAST"
+      - "SYSLOG"
+      - "SYS_ADMIN"
+      - "SYS_BOOT"
+      - "SYS_MODULE"
+      - "SYS_NICE"
+      - "SYS_PACCT"
+      - "SYS_PTRACE"
+      - "SYS_RAWIO"
+      - "SYS_RESOURCE"
+      - "SYS_TIME"
+      - "SYS_TTY_CONFIG"
+      - "WAKE_ALARM"
+
+    command:
+      - "/usr/sbin/mosquitto"
+      - "-c"
+      - "/mosquitto/config/mosquitto.conf"
+
+    container_name: "mqtt"
+
+    entrypoint:
+      - "/docker-entrypoint.sh"
+
+    environment:
+      - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      - "VERSION=2.0.18"
+      - "DOWNLOAD_SHA256=d665fe7d0032881b1371a47f34169ee4edab67903b2cd2b4c083822823f4448a"
+      - "GPG_KEYS=A0D6EEA1DCAE49A635A3B2F0779B22DFB3E717B7"
+      - "LWS_VERSION=4.2.1"
+      - "LWS_SHA256=842da21f73ccba2be59e680de10a8cce7928313048750eb6ad73b6fa50763c51"
+
+    hostname: "asusmini"
+
+    image: "eclipse-mosquitto:latest"
+
+    ipc: "private"
+
+    labels:
+      description: "Eclipse Mosquitto MQTT Broker"
+      maintainer: "Roger Light <roger@atchoo.org>"
+
+    logging:
+      driver: "json-file"
+      options: {}
+
+    network_mode: "host"
+
+    ports:
+      - "1883:1883/tcp"
+      - "9001:9001/tcp"
+
     privileged: true
 
     restart: "always"
@@ -1117,9 +720,307 @@ services:
       - "label=disable"
 
     volumes:
-      - "/wkspace/homeassistant/influxdb2/data:/data"
-      - "/wkspace/homeassistant/influxdb2/etc:/etc/influxdb2"
-      - "/wkspace/homeassistant/influxdb2:/var/lib/influxdb2"
+      - "/wkspace/homeassistant/mqtt/data:/mosquitto/data"
+      - "/wkspace/homeassistant/mqtt/log:/mosquitto/log"
+      - "/wkspace/homeassistant/mqtt:/mosquitto"
+
+  plex:
+
+    container_name: "plex"
+
+    entrypoint:
+      - "/init"
+
+    environment:
+      - "PGID=1000"
+      - "TZ=Europe/London"
+      - "VERSION=docker"
+      - "PLEX_CLAIM="
+      - "PUID=1000"
+      - "PATH=/lsiopy/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      - "HOME=/root"
+      - "LANGUAGE=en_US.UTF-8"
+      - "LANG=en_US.UTF-8"
+      - "TERM=xterm"
+      - "S6_CMD_WAIT_FOR_SERVICES_MAXTIME=0"
+      - "S6_VERBOSITY=1"
+      - "S6_STAGE2_HOOK=/docker-mods"
+      - "VIRTUAL_ENV=/lsiopy"
+      - "LSIO_FIRST_PARTY=true"
+      - "NVIDIA_DRIVER_CAPABILITIES=compute,video,utility"
+      - "DEBIAN_FRONTEND=noninteractive"
+      - "PLEX_DOWNLOAD=https://downloads.plex.tv/plex-media-server-new"
+      - "PLEX_ARCH=amd64"
+      - "PLEX_MEDIA_SERVER_APPLICATION_SUPPORT_DIR=/config/Library/Application Support"
+      - "PLEX_MEDIA_SERVER_HOME=/usr/lib/plexmediaserver"
+      - "PLEX_MEDIA_SERVER_MAX_PLUGIN_PROCS=6"
+      - "PLEX_MEDIA_SERVER_USER=abc"
+      - "PLEX_MEDIA_SERVER_INFO_VENDOR=Docker"
+      - "PLEX_MEDIA_SERVER_INFO_DEVICE=Docker Container (LinuxServer.io)"
+
+    expose:
+      - "1900/udp"
+      - "32400/tcp"
+      - "32410/udp"
+      - "32412/udp"
+      - "32413/udp"
+      - "32414/udp"
+      - "32469/tcp"
+      - "5353/udp"
+      - "8324/tcp"
+
+    hostname: "asusmini"
+
+    image: "lscr.io/linuxserver/plex:latest"
+
+    ipc: "private"
+
+    labels:
+      build_version: "Linuxserver.io version:- 1.32.7.7621-871adbd44-ls194 Build-date:- 2023-11-20T09:23:18+00:00"
+      com.docker.compose.config-hash: "0471a920340fc08656bbe923fe0f96d505360ea21fdb6329750cf2a8b71d0799"
+      com.docker.compose.container-number: "1"
+      com.docker.compose.depends_on: ""
+      com.docker.compose.image: "sha256:83a56df35ab914ec2cdd7c78268b2bf6b01d23f1964b4dae702c9bcd1be97d9f"
+      com.docker.compose.oneoff: "False"
+      com.docker.compose.project: "plex"
+      com.docker.compose.project.config_files: "/wkspace/homeassistant/plex/compose.yaml"
+      com.docker.compose.project.working_dir: "/wkspace/homeassistant/plex"
+      com.docker.compose.replace: "4bf77b89079465311acafff8990bdf8c87c58402669e960ffe875cfb4ed1ff20"
+      com.docker.compose.service: "plex"
+      com.docker.compose.version: "2.21.0"
+      maintainer: "thelamer"
+      org.opencontainers.image.authors: "linuxserver.io"
+      org.opencontainers.image.created: "2023-11-20T09:23:18+00:00"
+      org.opencontainers.image.description: "[Plex](https://plex.tv) organizes video, music and photos\
+        \ from personal media libraries and streams them to smart TVs, streaming boxes and mobile devices.\
+        \ This container is packaged as a standalone Plex Media Server. Straightforward design and bulk\
+        \ actions mean getting things done faster."
+      org.opencontainers.image.documentation: "https://docs.linuxserver.io/images/docker-plex"
+      org.opencontainers.image.licenses: "GPL-3.0-only"
+      org.opencontainers.image.ref.name: "4015f1ce1f739858f0257de6a0c3ef893485a06d"
+      org.opencontainers.image.revision: "4015f1ce1f739858f0257de6a0c3ef893485a06d"
+      org.opencontainers.image.source: "https://github.com/linuxserver/docker-plex"
+      org.opencontainers.image.title: "Plex"
+      org.opencontainers.image.url: "https://github.com/linuxserver/docker-plex/packages"
+      org.opencontainers.image.vendor: "linuxserver.io"
+      org.opencontainers.image.version: "1.32.7.7621-871adbd44-ls194"
+
+    logging:
+      driver: "json-file"
+      options: {}
+
+    network_mode: "host"
+
+    restart: "unless-stopped"
+
+    volumes:
+      - "/wkspace/homeassistant/plex/library:/config"
+      - "/wkspace/homeassistant/plex/movies:/movies"
+      - "/wkspace/homeassistant/plex/tvseries:/tv"
+
+    working_dir: "/"
+
+  portainer:
+
+    container_name: "portainer"
+
+    entrypoint:
+      - "/portainer"
+
+    environment:
+      - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+    hostname: "b3400fdd0aea"
+
+    image: "portainer/portainer-ce:latest"
+
+    ipc: "private"
+
+    labels:
+      com.docker.desktop.extension.api.version: ">= 0.2.2"
+      com.docker.desktop.extension.icon: "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/logos/portainer.png"
+      com.docker.extension.additional-urls: "[{\"title\":\"Website\",\"url\":\"https://www.portainer.io?utm_campaign=DockerCon&utm_source=DockerDesktop\"\
+        },{\"title\":\"Documentation\",\"url\":\"https://docs.portainer.io\"},{\"title\":\"Support\",\"\
+        url\":\"https://join.slack.com/t/portainer/shared_invite/zt-txh3ljab-52QHTyjCqbe5RibC2lcjKA\"\
+        }]"
+      com.docker.extension.detailed-description: "<p data-renderer-start-pos=\"226\">Portainer&rsquo;s\
+        \ Docker Desktop extension gives you access to all of Portainer&rsquo;s rich management functionality\
+        \ within your docker desktop experience.</p><h2 data-renderer-start-pos=\"374\">With Portainer\
+        \ you can:</h2><ul><li>See all your running containers</li><li>Easily view all of your container\
+        \ logs</li><li>Console into containers</li><li>Easily deploy your code into containers using a\
+        \ simple form</li><li>Turn your YAML into custom templates for easy reuse</li></ul><h2 data-renderer-start-pos=\"\
+        660\">About Portainer&nbsp;</h2><p data-renderer-start-pos=\"680\">Portainer is the worlds&rsquo;\
+        \ most popular universal container management platform with more than 650,000 active monthly users.\
+        \ Portainer can be used to manage Docker Standalone, Kubernetes, Docker Swarm and Nomad environments\
+        \ through a single common interface. It includes a simple GitOps automation engine and a Kube\
+        \ API.&nbsp;</p><p data-renderer-start-pos=\"1006\">Portainer Business Edition is our fully supported\
+        \ commercial grade product for business-wide use. It includes all the functionality that businesses\
+        \ need to manage containers at scale. Visit <a class=\"sc-jKJlTe dPfAtb\" href=\"http://portainer.io/\"\
+        \ title=\"http://Portainer.io\" data-renderer-mark=\"true\">Portainer.io</a> to learn more about\
+        \ Portainer Business and <a class=\"sc-jKJlTe dPfAtb\" href=\"http://portainer.io/take-3?utm_campaign=DockerCon&amp;utm_source=Docker%20Desktop\"\
+        \ title=\"http://portainer.io/take-3?utm_campaign=DockerCon&amp;utm_source=Docker%20Desktop\"\
+        \ data-renderer-mark=\"true\">get 3 free nodes.</a></p>"
+      com.docker.extension.publisher-url: "https://www.portainer.io"
+      com.docker.extension.screenshots: "[{\"alt\": \"screenshot one\", \"url\": \"https://portainer-io-assets.sfo2.digitaloceanspaces.com/screenshots/docker-extension-1.png\"\
+        },{\"alt\": \"screenshot two\", \"url\": \"https://portainer-io-assets.sfo2.digitaloceanspaces.com/screenshots/docker-extension-2.png\"\
+        },{\"alt\": \"screenshot three\", \"url\": \"https://portainer-io-assets.sfo2.digitaloceanspaces.com/screenshots/docker-extension-3.png\"\
+        },{\"alt\": \"screenshot four\", \"url\": \"https://portainer-io-assets.sfo2.digitaloceanspaces.com/screenshots/docker-extension-4.png\"\
+        },{\"alt\": \"screenshot five\", \"url\": \"https://portainer-io-assets.sfo2.digitaloceanspaces.com/screenshots/docker-extension-5.png\"\
+        },{\"alt\": \"screenshot six\", \"url\": \"https://portainer-io-assets.sfo2.digitaloceanspaces.com/screenshots/docker-extension-6.png\"\
+        },{\"alt\": \"screenshot seven\", \"url\": \"https://portainer-io-assets.sfo2.digitaloceanspaces.com/screenshots/docker-extension-7.png\"\
+        },{\"alt\": \"screenshot eight\", \"url\": \"https://portainer-io-assets.sfo2.digitaloceanspaces.com/screenshots/docker-extension-8.png\"\
+        },{\"alt\": \"screenshot nine\", \"url\": \"https://portainer-io-assets.sfo2.digitaloceanspaces.com/screenshots/docker-extension-9.png\"\
+        }]"
+      io.portainer.server: "true"
+      org.opencontainers.image.description: "Docker container management made simple, with the world’s\
+        \ most popular GUI-based container management platform."
+      org.opencontainers.image.title: "Portainer"
+      org.opencontainers.image.vendor: "Portainer.io"
+
+    logging:
+      driver: "json-file"
+      options: {}
+
+    mac_address: "02:42:ac:11:00:02"
+
+    network_mode: "bridge"
+
+    ports:
+      - "8000:8000/tcp"
+      - "9443:9443/tcp"
+
+    restart: "always"
+
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "portainer_data:/data"
+
+    working_dir: "/"
+
+  portainer_new:
+
+    command:
+      - "-v"
+      - "/wkspace/homeassistant/config_new/cert/:/certs"
+
+    container_name: "portainer_new"
+
+    entrypoint:
+      - "/portainer"
+
+    environment:
+      - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+    hostname: "5efea759d822"
+
+    image: "portainer/portainer-ce:latest"
+
+    ipc: "private"
+
+    labels:
+      com.docker.desktop.extension.api.version: ">= 0.2.2"
+      com.docker.desktop.extension.icon: "https://portainer-io-assets.sfo2.cdn.digitaloceanspaces.com/logos/portainer.png"
+      com.docker.extension.additional-urls: "[{\"title\":\"Website\",\"url\":\"https://www.portainer.io?utm_campaign=DockerCon&utm_source=DockerDesktop\"\
+        },{\"title\":\"Documentation\",\"url\":\"https://docs.portainer.io\"},{\"title\":\"Support\",\"\
+        url\":\"https://join.slack.com/t/portainer/shared_invite/zt-txh3ljab-52QHTyjCqbe5RibC2lcjKA\"\
+        }]"
+      com.docker.extension.detailed-description: "<p data-renderer-start-pos=\"226\">Portainer&rsquo;s\
+        \ Docker Desktop extension gives you access to all of Portainer&rsquo;s rich management functionality\
+        \ within your docker desktop experience.</p><h2 data-renderer-start-pos=\"374\">With Portainer\
+        \ you can:</h2><ul><li>See all your running containers</li><li>Easily view all of your container\
+        \ logs</li><li>Console into containers</li><li>Easily deploy your code into containers using a\
+        \ simple form</li><li>Turn your YAML into custom templates for easy reuse</li></ul><h2 data-renderer-start-pos=\"\
+        660\">About Portainer&nbsp;</h2><p data-renderer-start-pos=\"680\">Portainer is the worlds&rsquo;\
+        \ most popular universal container management platform with more than 650,000 active monthly users.\
+        \ Portainer can be used to manage Docker Standalone, Kubernetes, Docker Swarm and Nomad environments\
+        \ through a single common interface. It includes a simple GitOps automation engine and a Kube\
+        \ API.&nbsp;</p><p data-renderer-start-pos=\"1006\">Portainer Business Edition is our fully supported\
+        \ commercial grade product for business-wide use. It includes all the functionality that businesses\
+        \ need to manage containers at scale. Visit <a class=\"sc-jKJlTe dPfAtb\" href=\"http://portainer.io/\"\
+        \ title=\"http://Portainer.io\" data-renderer-mark=\"true\">Portainer.io</a> to learn more about\
+        \ Portainer Business and <a class=\"sc-jKJlTe dPfAtb\" href=\"http://portainer.io/take-3?utm_campaign=DockerCon&amp;utm_source=Docker%20Desktop\"\
+        \ title=\"http://portainer.io/take-3?utm_campaign=DockerCon&amp;utm_source=Docker%20Desktop\"\
+        \ data-renderer-mark=\"true\">get 3 free nodes.</a></p>"
+      com.docker.extension.publisher-url: "https://www.portainer.io"
+      com.docker.extension.screenshots: "[{\"alt\": \"screenshot one\", \"url\": \"https://portainer-io-assets.sfo2.digitaloceanspaces.com/screenshots/docker-extension-1.png\"\
+        },{\"alt\": \"screenshot two\", \"url\": \"https://portainer-io-assets.sfo2.digitaloceanspaces.com/screenshots/docker-extension-2.png\"\
+        },{\"alt\": \"screenshot three\", \"url\": \"https://portainer-io-assets.sfo2.digitaloceanspaces.com/screenshots/docker-extension-3.png\"\
+        },{\"alt\": \"screenshot four\", \"url\": \"https://portainer-io-assets.sfo2.digitaloceanspaces.com/screenshots/docker-extension-4.png\"\
+        },{\"alt\": \"screenshot five\", \"url\": \"https://portainer-io-assets.sfo2.digitaloceanspaces.com/screenshots/docker-extension-5.png\"\
+        },{\"alt\": \"screenshot six\", \"url\": \"https://portainer-io-assets.sfo2.digitaloceanspaces.com/screenshots/docker-extension-6.png\"\
+        },{\"alt\": \"screenshot seven\", \"url\": \"https://portainer-io-assets.sfo2.digitaloceanspaces.com/screenshots/docker-extension-7.png\"\
+        },{\"alt\": \"screenshot eight\", \"url\": \"https://portainer-io-assets.sfo2.digitaloceanspaces.com/screenshots/docker-extension-8.png\"\
+        },{\"alt\": \"screenshot nine\", \"url\": \"https://portainer-io-assets.sfo2.digitaloceanspaces.com/screenshots/docker-extension-9.png\"\
+        }]"
+      io.portainer.server: "true"
+      org.opencontainers.image.description: "Docker container management made simple, with the world’s\
+        \ most popular GUI-based container management platform."
+      org.opencontainers.image.title: "Portainer"
+      org.opencontainers.image.vendor: "Portainer.io"
+
+    logging:
+      driver: "json-file"
+      options: {}
+
+    network_mode: "bridge"
+
+    ports:
+      - "8000:8000/tcp"
+      - "9443:9443/tcp"
+
+    restart: "always"
+
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "portainer_data:/data"
+
+    working_dir: "/"
+
+  tvheadend:
+    container_name: "tvheadend"
+    entrypoint:
+      - "/init"
+    environment:
+      - "TZ=Europe/London"
+      - "PUID=1000"
+      - "PGID=1000"
+      - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      - "PS1=$(whoami)@$(hostname):$(pwd)\\$ "
+      - "HOME=/config"
+      - "TERM=xterm"
+    expose:
+      - "9981/tcp"
+      - "9982/tcp"
+    hostname: "asusmini"
+    image: "tvheadend-sl-python3"
+    ipc: "private"
+    labels:
+      MAINTAINER: "sparkyballs,TheLamer"
+      build_version: "Linuxserver.io version:- ebb09680-ls34 Build-date:- 2019-09-19T22:37:21-04:00"
+      com.docker.compose.config-hash: "15212104f9850ad5e19dc127de8e9a1b921631d9804ab2510fdbf041a68f29c7"
+      com.docker.compose.container-number: "1"
+      com.docker.compose.depends_on: ""
+      com.docker.compose.image: "sha256:b13465cb22de41d0ec3b68c1d0947ef6cc1f391a1479e4aa491b70f87a17f388"
+      com.docker.compose.oneoff: "False"
+      com.docker.compose.project: "tvheadend-streamlink"
+      com.docker.compose.project.config_files: "/wkspace/workspace/tvheadend-streamlink/compose.yaml"
+      com.docker.compose.project.working_dir: "/wkspace/workspace/tvheadend-streamlink"
+      com.docker.compose.service: "tvheadend"
+      com.docker.compose.version: "2.21.0"
+      maintainer: "saarg"
+    logging:
+      driver: "json-file"
+      options: {}
+    network_mode: "host"
+    restart: "unless-stopped"
+    volumes:
+      - "/wkspace/homeassistant/tvheadend:/config"
+      - "2fdb744d8053a16054a80fb165b12b38e3388f294a8e187ff3525472c9f9a66c:/recordings"
 
 version: "3.6"
 
+volumes:
+  2fdb744d8053a16054a80fb165b12b38e3388f294a8e187ff3525472c9f9a66c:
+    external: true
+  portainer_data:
+    external: true
