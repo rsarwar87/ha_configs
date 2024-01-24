@@ -10,6 +10,8 @@ automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
 
+mqtt: !include custom_entities/mqtt.yaml
+
 http:
   #ssl_certificate: /config/cert/cert.pem
   #ssl_key: /config/cert/key.pem
@@ -30,6 +32,7 @@ binary_sensor: !include custom_entities/binary_sensors.yaml
 template: !include custom_entities/templates.yaml 
 utility_meter: !include custom_entities/utility_meters.yaml 
 
+alexa: !include alexa.yaml
 
 panel_iframe:
   firefoxr:
@@ -44,6 +47,9 @@ panel_iframe:
   router:
     title: "InfluxDB 2.0"
     url: "https://connectify29.asuscomm.com:51234/"
+  vscode:
+    title: "VScode"
+    url: "http://192.168.1.250:8443"
   grafana:
     title: "Grafana"
     url: "https://connectify29.asuscomm.com:33333/d/a2144abd-cb07-4d23-acb6-3be27f41b4ad/givenergy?orgId=1&from=now-24h&to=now"

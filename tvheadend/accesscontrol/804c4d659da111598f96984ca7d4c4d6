@@ -1,5 +1,5 @@
 {
-	"index": 1,
+	"index": 3,
 	"enabled": true,
 	"username": "livetvh",
 	"prefix": "0.0.0.0/0,::/0",
@@ -28,8 +28,8 @@
 	"htsp_anonymize": false,
 	"dvr_config": [
 	],
-	"webui": false,
-	"admin": false,
+	"webui": true,
+	"admin": true,
 	"conn_limit_type": 0,
 	"conn_limit": 0,
 	"channel_min": 0,

@@ -82,3 +82,15 @@
   - entity_id: switch.plug
     service: light.turn_off
   mode: single
+- id: '1706122912622'
+  alias: Hotwater Automation
+  description: ''
+  use_blueprint:
+    path: custom/hotwater.yaml
+    input:
+      time_before: input_datetime.hotwater_before
+      heating: switch.hotwater_thermostat_led_2
+      temp_sensor: sensor.hotwater_thermostat_hotwater_temperature_2
+      min_temp: input_number.hotwater_min_temp
+      set_temp: input_number.hotwater_set_temp
+      time_after: input_datetime.hotwater_after

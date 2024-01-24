@@ -30,7 +30,6 @@
                       content:
                         type: entities  
                         entities:   
-                          - switch.predbat_set_charge_window
                           - switch.predbat_set_charge_freeze
                           - switch.predbat_set_reserve_enable
                           - switch.predbat_set_discharge_freeze_only
@@ -55,6 +54,7 @@
                           - switch.predbat_expert_mode
                           - switch.predbat_debug_enable
                           - switch.predbat_plan_debug
+                          - switch.predbat_calculate_fast_plan
                           - switch.predbat_battery_capacity_nominal
                           - switch.predbat_calculate_discharge_oncharge
                           - switch.predbat_calculate_second_pass

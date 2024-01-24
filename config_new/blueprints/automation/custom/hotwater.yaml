@@ -1,0 +1,105 @@
+
+blueprint:
+  name: Hotwater Tutorial
+  description: Automate gas boiler
+  domain: automation
+
+  input:
+    heating:
+      name: Water Heater Device
+      description: The water heater device to use.
+      selector:
+        entity:
+          domain: switch
+    temp_sensor:
+      name: Temperature Sensor
+      description: Temperature Sensor to check.
+      selector:
+        entity:
+          domain: sensor
+          device_class: temperature
+    min_temp:
+      name: Minimum Temp
+      description: If temperature is below this value and someone is home, It turns heating on.
+      default: []
+      selector:
+        entity:
+          domain: input_number
+    set_temp:
+      name: Temperature Target
+      description: If the heating turns on, It heats to this target temperature.
+      default: []
+      selector:
+        entity:
+          domain: input_number
+    time_after:
+      name: Time After
+      description: After this time the water heating turns on, so water is warm in the morning
+      default: []
+      selector:
+        entity:
+          domain: input_datetime
+    time_before:
+      name: Time Before
+      description: After this time the water heating turns off, This to prevent the water heating is on in the middle of the night
+      default: []
+      selector:
+        entity:
+          domain: input_datetime
+
+variables:
+  set_temp: !input set_temp
+  set_temp: !input set_temp
+
+
+trigger:
+  - platform: homeassistant
+    event: start
+  - platform: event
+    event_type: automation_reloaded
+  - platform: numeric_state
+    entity_id: !input 'temp_sensor'
+    below: !input min_temp
+  - platform: numeric_state
+    entity_id: !input 'temp_sensor'
+    above: !input set_temp
+  - platform: time
+    at: !input time_after
+  - platform: time
+    at: !input time_before
+
+
+action:
+  - choose:
+      - conditions:
+          - condition: numeric_state
+            entity_id: !input 'temp_sensor'
+            below: !input min_temp
+          - condition: time
+            before: !input 'time_before'
+            after: !input 'time_after'
+        sequence:
+          - service: switch.turn_on
+            data:
+              entity_id: !input 'heating'
+      - conditions:
+          - condition: numeric_state
+            entity_id: !input 'temp_sensor'
+            above: !input set_temp
+        sequence:
+          - service: switch.turn_off
+            data:
+              entity_id: !input 'heating'
+      - conditions:
+          - condition: time
+            after: !input 'time_before'
+        sequence:
+          - service: switch.turn_off
+            data:
+              entity_id: !input 'heating'
+
+
+    default:
+      - service: switch.turn_off
+        data:
+          entity_id: !input 'heating'

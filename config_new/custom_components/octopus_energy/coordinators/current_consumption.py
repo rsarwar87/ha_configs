@@ -41,7 +41,6 @@ async def async_get_live_consumption(
         return CurrentConsumptionCoordinatorResult(current_date, 1, refresh_rate_in_minutes, result)
     except Exception as e:
       if isinstance(e, ApiException) == False:
-        _LOGGER.error(e)
         raise
 
       result: CurrentConsumptionCoordinatorResult = None
@@ -67,18 +66,18 @@ async def async_get_live_consumption(
   
   return previous_consumption
 
-async def async_create_current_consumption_coordinator(hass, client: OctopusEnergyApiClient, device_id: str, refresh_rate_in_minutes: int):
+async def async_create_current_consumption_coordinator(hass, account_id: str, client: OctopusEnergyApiClient, device_id: str, refresh_rate_in_minutes: int):
   """Create current consumption coordinator"""
   key = DATA_CURRENT_CONSUMPTION_KEY.format(device_id)
 
   # Reset data as we might have new information
-  hass.data[DOMAIN][key] = None
+  hass.data[DOMAIN][account_id][key] = None
 
   async def async_update_data():
     """Fetch data from API endpoint."""
     current: datetime = now()
-    previous_consumption = hass.data[DOMAIN][key] if key in hass.data[DOMAIN] else None
-    hass.data[DOMAIN][key] = await async_get_live_consumption(
+    previous_consumption = hass.data[DOMAIN][account_id][key] if key in hass.data[DOMAIN][account_id] else None
+    hass.data[DOMAIN][account_id][key] = await async_get_live_consumption(
       current,
       client,
       device_id,
@@ -86,7 +85,7 @@ async def async_create_current_consumption_coordinator(hass, client: OctopusEner
       refresh_rate_in_minutes
     )
     
-    return hass.data[DOMAIN][key]
+    return hass.data[DOMAIN][account_id][key]
 
   coordinator = DataUpdateCoordinator(
     hass,
@@ -96,7 +95,5 @@ async def async_create_current_consumption_coordinator(hass, client: OctopusEner
     update_interval=timedelta(seconds=COORDINATOR_REFRESH_IN_SECONDS),
     always_update=True
   )
-  
-  await coordinator.async_config_entry_first_refresh()
 
   return coordinator

@@ -1,27 +1,27 @@
 #EXTM3U
 #EXTINF:-1 tvg-name="BBC ONE" tvg-id="BBC1London.uk" group-title="ipPlayer" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/BBC_One_HD_Box.svg/640px-BBC_One_HD_Box.svg.png",BBC ONE
-pipe:///opt/streamlink-old.sh https://www.bbc.co.uk/iplayer/live/bbcone
+pipe:///opt/streamlink-bbc.sh https://www.bbc.co.uk/iplayer/live/bbcone
 #EXTINF:-1 tvg-name="BBC TWO" tvg-id="BBC2.uk" group-title="ipPlayer" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/BBC_Two_HD_flat.svg/640px-BBC_Two_HD_flat.svg.png",BBC TWO
-pipe:///opt/streamlink-old.sh https://www.bbc.co.uk/iplayer/live/bbctwo
+pipe:///opt/streamlink-bbc.sh https://www.bbc.co.uk/iplayer/live/bbctwo
 #EXTINF:-1 tvg-name="BBC FOUR" tvg-id="BBC4.uk" group-title="ipPlayer" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/BBC_Four.svg/640px-BBC_Four.svg.png",BBC FOUR
-pipe:///opt/streamlink-old.sh https://www.bbc.co.uk/iplayer/live/bbcfour
+pipe:///opt/streamlink-bbc.sh https://www.bbc.co.uk/iplayer/live/bbcfour
 #EXTINF:-1 tvg-name="CBBC" tvg-id="CBBC.uk" group-title="ipPlayer" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/3/37/CBBC_2016_logo.svg/600px-CBBC_2016_logo.svg.png",CBBC
-pipe:///opt/streamlink-old.sh https://www.bbc.co.uk/iplayer/live/cbbc
+pipe:///opt/streamlink-bbc.sh https://www.bbc.co.uk/iplayer/live/cbbc
 #EXTINF:-1 tvg-name="CBeebies" tvg-id="CBeebies.uk" group-title="ipPlayer" tvg-logo="https://upload.wikimedia.org/wikipedia/de/thumb/1/16/CBeebies.svg/640px-CBeebies.svg.png",CBeebies
-pipe:///opt/streamlink-old.sh https://www.bbc.co.uk/iplayer/live/cbeebies
+pipe:///opt/streamlink-bbc.sh https://www.bbc.co.uk/iplayer/live/cbeebies
 #EXTINF:-1 tvg-name="BBC NEWS" tvg-id="BBCNews.nws" group-title="ipPlayer" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/f/ff/BBC_News.svg/640px-BBC_News.svg.png",BBC NEWS
-pipe:///opt/streamlink-old.sh https://www.bbc.co.uk/iplayer/live/bbcnews
+pipe:///opt/streamlink-bbc.sh https://www.bbc.co.uk/iplayer/live/bbcnews
 #EXTINF:-1 tvg-name="BBC PARLIAMENT" tvg-id="BBCParliament.uk" group-title="ipPlayer" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/BBC_Parliament_Logo.svg/640px-BBC_Parliament_Logo.svg.png",BBC PARLIAMENT
-pipe:///opt/streamlink-old.sh https://www.bbc.co.uk/iplayer/live/bbcparliament
+pipe:///opt/streamlink-bbc.sh https://www.bbc.co.uk/iplayer/live/bbcparliament
 #EXTINF:-1 tvg-name="BBC ALBA" tvg-id="BBCAlba.uk" group-title="ipPlayer" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/a/a5/BBC_Alba.svg/640px-BBC_Alba.svg.png",BBC ALBA
-pipe:///opt/streamlink-old.sh https://www.bbc.co.uk/iplayer/live/bbcalba
+pipe:///opt/streamlink-bbc.sh https://www.bbc.co.uk/iplayer/live/bbcalba
 #EXTINF:-1 tvg-name="BBC S4C" tvg-id="S4C.uk" group-title="ipPlayer" tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/S4C_logo_2014.svg/569px-S4C_logo_2014.svg.png",BBC S4C
-pipe:///opt/streamlink-old.sh https://www.bbc.co.uk/iplayer/live/s4c
+pipe:///opt/streamlink-bbc.sh https://www.bbc.co.uk/iplayer/live/s4c
 #EXTINF:-1 tvg-name="Sky News" tvg-id="SkyNews.uk" group-title="ipPlayer" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/5/57/Sky_News_logo.svg/1920px-Sky_News_logo.svg.png",Sky News
-pipe:///opt/streamlink-old.sh https://www.youtube.com/watch?v=9Auq9mYxFEE
+pipe:///opt/streamlink-youtube.sh https://www.youtube.com/watch?v=w9uJg68CV4g
 #EXTINF:-1 tvg-name="GB News" tvg-id="GBNews.uk" group-title="ipPlayer" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/3/35/GB_News_Logo.svg/1920px-GB_News_Logo.svg.png",GB News
-pipe:///opt/streamlink-old.sh https://www.youtube.com/watch?v=8WX6YL9JnLw 
+pipe:///opt/streamlink-youtube.sh https://www.youtube.com/watch?v=8WX6YL9JnLw 
 #EXTINF:-1 tvg-name="France24" tvg-id="France24.fr" group-title="ipPlayer" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/6/65/FRANCE_24_logo.svg/1024px-FRANCE_24_logo.svg.png",France 24
-pipe:///opt/streamlink-old.sh https://www.youtube.com/watch?v=h3MuIUNCCzI
+pipe:///opt/streamlink-youtube.sh https://www.youtube.com/watch?v=h3MuIUNCCzI
 #EXTINF:-1 tvg-name="Al Jazeera" tvg-id="AlJazeera.en" group-title="ipPlayer" tvg-logo="https://upload.wikimedia.org/wikipedia/en/thumb/f/f2/Aljazeera_eng.svg/1920px-Aljazeera_eng.svg.png",Al Jazeera
-pipe:///opt/streamlink-old.sh https://www.youtube.com/watch?v=gCNeDWCI0vo
+pipe:///opt/streamlink-youtube.sh https://www.youtube.com/watch?v=gCNeDWCI0vo

@@ -15,7 +15,7 @@
     name: GridOctoIn
     cycle: daily
   gasin:
-    source: sensor.octopus_energy_gas_e6e09639492323_7402173408_current_accumulative_consumption
+    source: sensor.octopus_energy_gas_e6e09639492323_7402173408_current_accumulative_consumption_kwh
     name: GasIn
     cycle: daily
   gridin:

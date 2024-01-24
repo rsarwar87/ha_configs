@@ -11,6 +11,18 @@
           cards:
           - type: thermostat
             entity: climate.bed_room
+            features:
+              - style: icons
+                preset_modes:
+                  - none
+                  - boost
+                type: climate-preset-modes
+              - type: climate-hvac-modes
+                hvac_modes:
+                  - auto
+                  - heat
+                  - 'off'
+            show_current_as_primary: false
           - type: history-graph
             entities:
               - entity: climate.bed_room
@@ -19,6 +31,18 @@
           cards:
           - type: thermostat
             entity: climate.study_room
+            features:
+              - style: icons
+                preset_modes:
+                  - none
+                  - boost
+                type: climate-preset-modes
+              - type: climate-hvac-modes
+                hvac_modes:
+                  - auto
+                  - heat
+                  - 'off'
+            show_current_as_primary: false
           - type: history-graph
             entities:
               - entity: climate.study_room
@@ -27,6 +51,18 @@
           cards:
           - type: thermostat
             entity: climate.garden_room
+            features:
+              - style: icons
+                preset_modes:
+                  - none
+                  - boost
+                type: climate-preset-modes
+              - type: climate-hvac-modes
+                hvac_modes:
+                  - auto
+                  - heat
+                  - 'off'
+            show_current_as_primary: false
           - type: history-graph
             entities:
               - entity: climate.garden_room
@@ -35,6 +71,18 @@
           cards:
           - type: thermostat
             entity: climate.living_room
+            features:
+              - style: icons
+                preset_modes:
+                  - none
+                  - boost
+                type: climate-preset-modes
+              - type: climate-hvac-modes
+                hvac_modes:
+                  - auto
+                  - heat
+                  - 'off'
+            show_current_as_primary: false
           - type: history-graph
             entities:
               - entity: climate.living_room
@@ -44,6 +92,18 @@
           cards:
           - type: thermostat
             entity: climate.dinning_room
+            features:
+              - style: icons
+                preset_modes:
+                  - none
+                  - boost
+                type: climate-preset-modes
+              - type: climate-hvac-modes
+                hvac_modes:
+                  - auto
+                  - heat
+                  - 'off'
+            show_current_as_primary: false
           - type: history-graph
             entities:
               - entity: climate.dinning_room

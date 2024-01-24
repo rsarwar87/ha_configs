@@ -1,5 +1,5 @@
 {
-	"index": 4,
+	"index": 6,
 	"enabled": true,
 	"username": "*",
 	"prefix": "0.0.0.0/0,::/0",
@@ -18,9 +18,7 @@
 	"dvr": [
 		"basic",
 		"htsp",
-		"all",
-		"all_rw",
-		"failed"
+		"all"
 	],
 	"htsp_anonymize": false,
 	"dvr_config": [

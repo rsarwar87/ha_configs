@@ -10,6 +10,7 @@ from typing import Any, Optional
 from asusrouter.error import AsusRouterError
 from asusrouter.modules.connection import ConnectionState, ConnectionType
 from asusrouter.modules.identity import AsusDevice
+from asusrouter.modules.parental_control import ParentalControlRule
 from homeassistant.components.device_tracker import CONF_CONSIDER_HOME
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
@@ -19,8 +20,9 @@ from homeassistant.const import (
     CONF_SSL,
     Platform,
 )
-from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
+from homeassistant.core import CALLBACK_TYPE, HomeAssistant, ServiceCall, callback
 from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.device_registry import format_mac
 from homeassistant.helpers.dispatcher import async_dispatcher_send
@@ -34,7 +36,16 @@ from .client import ARClient
 from .const import (
     ACCESS_POINT,
     AIMESH,
+    CONF_CLIENT_DEVICE,
+    CONF_CLIENT_FILTER,
+    CONF_CLIENT_FILTER_LIST,
+    CONF_CLIENTS_IN_ATTR,
+    CONF_CREATE_DEVICES,
+    CONF_DEFAULT_CLIENT_DEVICE,
+    CONF_DEFAULT_CLIENT_FILTER,
+    CONF_DEFAULT_CLIENTS_IN_ATTR,
     CONF_DEFAULT_CONSIDER_HOME,
+    CONF_DEFAULT_CREATE_DEVICES,
     CONF_DEFAULT_EVENT,
     CONF_DEFAULT_FORCE_CLIENTS,
     CONF_DEFAULT_FORCE_CLIENTS_WAITTIME,
@@ -103,7 +114,7 @@ class ARSensorHandler:
 
         # Sensors
         self._clients_number: int = 0
-        self._clients_list: list[dict[str, Any]] = []
+        self._clients_list: Optional[list[dict[str, Any]]] = []
         self._latest_connected: Optional[datetime] = None
         self._latest_connected_list: list[dict[str, Any]] = []
         self._aimesh_number: int = 0
@@ -133,7 +144,7 @@ class ARSensorHandler:
     def update_clients(
         self,
         clients_number: int,
-        clients_list: list[Any],
+        clients_list: Optional[list[Any]],
         latest_connected: Optional[datetime],
         latest_connected_list: list[Any],
     ) -> bool:
@@ -280,6 +291,35 @@ class ARDevice:
         self._latest_connected_list: list[dict[str, Any]] = []
         self._connect_error: bool = False
 
+        # Sensor filters
+        self.sensor_filters: dict[tuple[str, str], list[str]] = {}
+
+        # Client features
+        self.client_device: bool = self._options.get(
+            CONF_CLIENT_DEVICE,
+            CONF_DEFAULT_CLIENT_DEVICE,
+        )
+        self.clients_in_attr: bool = self._options.get(
+            CONF_CLIENTS_IN_ATTR,
+            CONF_DEFAULT_CLIENTS_IN_ATTR,
+        )
+        if self.clients_in_attr is False:
+            # Mask clients in attributes
+            self.sensor_filters[(DEVICES, NUMBER)] = [DEVICES]
+        self.create_devices: bool = self._options.get(
+            CONF_CREATE_DEVICES,
+            CONF_DEFAULT_CREATE_DEVICES,
+        )
+        self._pc_rules: dict[str, Any] = {}
+
+        # Client filter
+        self._client_filter: str = self._options.get(
+            CONF_CLIENT_FILTER, CONF_DEFAULT_CLIENT_FILTER
+        )
+        self._client_filter_list: list[str] = self._options.get(
+            CONF_CLIENT_FILTER_LIST, []
+        )
+
         # On-close parameters
         self._on_close: list[Callable] = []
 
@@ -306,15 +346,29 @@ class ARDevice:
         if self._identity.model is not None:
             self._conf_name = self._identity.model
 
-        # Migrate from 0.21.x and below
-        # To be removed in 0.25.0
         # Tracked entities
         entity_reg = er.async_get(self.hass)
         tracked_entries = er.async_entries_for_config_entry(
             entity_reg, self._config_entry.entry_id
         )
 
+        # Clean up devices with no entities
+        device_registry = dr.async_get(self.hass)
+        devices = dr.async_entries_for_config_entry(
+            dr.async_get(self.hass), self._config_entry.entry_id
+        )
+        for device_entry in devices:
+            entries = er.async_entries_for_device(entity_reg, device_entry.id)
+            # No entities for the device
+            if len(entries) == 0:
+                _LOGGER.debug(
+                    "Removing device `%s` since it has no entities", device_entry.name
+                )
+                device_registry.async_remove_device(device_entry.id)
+
         for entry in tracked_entries:
+            # Migrate from 0.21.x and below
+            # To be removed in 0.30.0
             uid: str = entry.unique_id
             if DOMAIN in uid:
                 new_uid = uid.replace(f"{DOMAIN}_", "")
@@ -329,6 +383,8 @@ class ARDevice:
 
                 entity_reg.async_update_entity(entry.entity_id, new_unique_id=new_uid)
 
+            # Migrate from 0.21.x and below
+            # To be removed in 0.30.0
             if any(id_to_find in uid for id_to_find in ("lan_speed", "wan_speed")):
                 entity_reg.async_remove(entry.entity_id)
 
@@ -340,6 +396,11 @@ class ARDevice:
                 mac = capabilities["mac"]
                 self._clients[mac] = ARClient(mac)
 
+                # Create devices when tracker was enabled
+                disabled_by = entry.disabled_by
+                if disabled_by is None:
+                    self._clients[mac].device = True
+
         # Mode-specific
         if self._mode in (ACCESS_POINT, MEDIA_BRIDGE, ROUTER):
             # Update AiMesh
@@ -347,6 +408,9 @@ class ARDevice:
 
             # Update clients
             await self.update_clients()
+
+            # Update parental control
+            await self.update_pc_rules()
 
             # Force clients settings
             # This should be done after clients update so that first update is fast
@@ -367,8 +431,30 @@ class ARDevice:
                 "Device is in AiMesh node mode. Device tracking and AiMesh monitoring is disabled"
             )
 
+        # Clients filter
+        match self._client_filter:
+            case "include":
+                _LOGGER.debug("Setting clients filter: `include`")
+                self._clients = {
+                    mac: client
+                    for mac, client in self._clients.items()
+                    if mac in self._client_filter_list
+                }
+            case "exclude":
+                _LOGGER.debug("Setting clients filter: `exclude`")
+                self._clients = {
+                    mac: client
+                    for mac, client in self._clients.items()
+                    if mac not in self._client_filter_list
+                }
+            case _:
+                _LOGGER.debug("Setting clients filter: `no_filter`")
+
         # Initialize sensor coordinators
         await self._init_sensor_coordinators()
+
+        # Initialize services
+        await self._init_services()
 
         # On-close parameters
         self.async_on_close(
@@ -392,6 +478,7 @@ class ARDevice:
         if self._mode in (ACCESS_POINT, MEDIA_BRIDGE, ROUTER):
             await self.update_clients()
             await self.update_nodes()
+            await self.update_pc_rules()
 
     async def update_clients(self) -> None:
         """Update AsusRouter clients."""
@@ -496,6 +583,22 @@ class ARDevice:
                 self._clients_number += 1
                 self._clients_list.append(client.identity)
 
+        # Filter clients
+        # Only include the listed clients
+        if self._client_filter == "include":
+            self._clients = {
+                mac: client
+                for mac, client in self._clients.items()
+                if mac in self._client_filter_list
+            }
+        # Exclude the listed clients
+        elif self._client_filter == "exclude":
+            self._clients = {
+                mac: client
+                for mac, client in self._clients.items()
+                if mac not in self._client_filter_list
+            }
+
         async_dispatcher_send(self.hass, self.signal_device_update)
         if new_client:
             async_dispatcher_send(self.hass, self.signal_device_new)
@@ -561,7 +664,7 @@ class ARDevice:
             if not self._connect_error:
                 self._connect_error = True
                 _LOGGER.error(
-                    "Error connecting to '%s' for device update: %s",
+                    "Error connecting to '%s' for aimesh update: %s",
                     self._conf_host,
                     ex,
                 )
@@ -608,6 +711,95 @@ class ARDevice:
         async_dispatcher_send(self.hass, self.signal_aimesh_update)
         if new_node:
             async_dispatcher_send(self.hass, self.signal_aimesh_new)
+
+    async def update_pc_rules(self) -> None:
+        """Update parental control rules."""
+
+        _LOGGER.debug("Updating parental control rules for '%s'", self._conf_host)
+        try:
+            pc_data = (
+                await self.bridge._get_data_parental_control()  # pylint: disable=protected-access
+            )
+        except UpdateFailed as ex:
+            if not self._connect_error:
+                self._connect_error = True
+                _LOGGER.error(
+                    "Error connecting to '%s' for pc rules update: %s",
+                    self._conf_host,
+                    ex,
+                )
+            return
+
+        new_flag = False
+
+        rules: dict[str, ParentalControlRule] = pc_data.get("rules", {})
+
+        rules_to_save = {}
+
+        # Update existing rules
+        for mac, rule in self._pc_rules.items():
+            rule = rules.pop(mac, None)
+            if rule is None:
+                # If the rule was removed
+                new_flag = True
+                continue
+            rules_to_save[mac] = rule
+
+        # Add new rules
+        for mac, rule in rules.items():
+            new_flag = True
+            rules_to_save[mac] = rule
+
+        # Check the rules for non-valid ones
+        rules_to_save = {
+            mac: rule
+            for mac, rule in rules_to_save.items()
+            if mac != "" and rule.mac is not None
+        }
+
+        # Save rules
+        self._pc_rules = rules_to_save
+
+        async_dispatcher_send(self.hass, self.signal_pc_rules_update)
+        if new_flag:
+            async_dispatcher_send(self.hass, self.signal_pc_rules_new)
+
+    async def _init_services(self) -> None:
+        """Initialize AsusRouter services."""
+
+        # Parental control service
+        async def async_service_device_internet_access(service: ServiceCall):
+            """Adjust device internet access."""
+
+            await self.bridge.async_pc_rule(raw=service.data)
+
+            # Force PC rules update
+            await self.update_pc_rules()
+
+            # In case of removing rule(s) we need to reload the platform
+            if service.data.get("state") == "remove":
+                unload = await self.hass.config_entries.async_unload_platforms(
+                    self._config_entry, [Platform.SWITCH]
+                )
+                if unload:
+                    await self.hass.config_entries.async_forward_entry_setups(
+                        self._config_entry, [Platform.SWITCH]
+                    )
+
+        if self._mode == ROUTER:
+            self.hass.services.async_register(
+                DOMAIN, "device_internet_access", async_service_device_internet_access
+            )
+
+        # Remove device trackers service
+        async def async_service_remove_trackers(service: ServiceCall):
+            """Remove device trackers."""
+
+            await self.remove_trackers(raw=service.data)
+
+        self.hass.services.async_register(
+            DOMAIN, "remove_trackers", async_service_remove_trackers
+        )
 
     async def _init_sensor_coordinators(self) -> None:
         """Initialize sensor coordinators."""
@@ -675,9 +867,13 @@ class ARDevice:
         # Devices
         if DEVICES in self._sensor_coordinator:
             coordinator = self._sensor_coordinator[DEVICES][COORDINATOR]
+
+            # Block clients list for attributes
+            clients_list = None if self.clients_in_attr is False else self._clients_list
+
             if self._sensor_handler.update_clients(
                 self._clients_number,
-                self._clients_list,
+                clients_list,
                 self._latest_connected,
                 self._latest_connected_list,
             ):
@@ -730,6 +926,17 @@ class ARDevice:
     ):
         """Fire HA event."""
 
+        # Check for mute
+        _event_mac = args.get("mac") if isinstance(args, dict) else None
+        if _event_mac is not None:
+            match self._client_filter:
+                case "include":
+                    if _event_mac not in self._client_filter_list:
+                        return
+                case "exclude":
+                    if _event_mac in self._client_filter_list:
+                        return
+
         _event_status = self._options.get(event)
         if _event_status is None:
             _event_status = CONF_DEFAULT_EVENT.get(event, False)
@@ -766,15 +973,15 @@ class ARDevice:
                     self._clients.pop(mac)
                     _LOGGER.debug("Found and removed")
 
-        # Update devices
-        await self.update_devices()
+        # Update clients
+        await self.update_clients()
 
         # Reload device tracker platform
         unload = await self.hass.config_entries.async_unload_platforms(
             self._config_entry, [Platform.DEVICE_TRACKER]
         )
         if unload:
-            self.hass.config_entries.async_setup_platforms(
+            await self.hass.config_entries.async_forward_entry_setups(
                 self._config_entry, [Platform.DEVICE_TRACKER]
             )
 
@@ -820,6 +1027,18 @@ class ARDevice:
         return f"{DOMAIN}-device-update"
 
     @property
+    def signal_pc_rules_new(self) -> str:
+        """Notify new parental control rules."""
+
+        return f"{DOMAIN}-pc-rules-new"
+
+    @property
+    def signal_pc_rules_update(self) -> str:
+        """Notify updated parental control rules."""
+
+        return f"{DOMAIN}-pc-rules-update"
+
+    @property
     def aimesh(self) -> dict[str, Any]:
         """Return AiMesh nodes."""
 
@@ -836,6 +1055,12 @@ class ARDevice:
         """Router MAC address."""
 
         return self._mac
+
+    @property
+    def pc_rules(self) -> dict[str, ParentalControlRule]:
+        """Return parental control rules."""
+
+        return self._pc_rules
 
     @property
     def sensor_coordinator(self) -> dict[str, Any]:
