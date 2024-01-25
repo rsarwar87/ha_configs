@@ -10,6 +10,12 @@ blueprint:
       description: The water heater device to use.
       selector:
         entity:
+          domain: water_heater
+    heating_led:
+      name: Water Heater Led
+      description: The water heater device to use.
+      selector:
+        entity:
           domain: switch
     temp_sensor:
       name: Temperature Sensor
@@ -79,27 +85,46 @@ action:
             before: !input 'time_before'
             after: !input 'time_after'
         sequence:
-          - service: switch.turn_on
+          - service: water_heater.set_operation_mode
             data:
               entity_id: !input 'heating'
+              operation_mode: "on"
+          - service: switch.turn_on
+            data:
+              entity_id: !input 'heating_led'
+          - service: switch.turn_on
+            data:
+              entity_id: !input 'heating_led'
       - conditions:
           - condition: numeric_state
             entity_id: !input 'temp_sensor'
             above: !input set_temp
         sequence:
-          - service: switch.turn_off
+          - service: water_heater.set_operation_mode
             data:
               entity_id: !input 'heating'
+              operation_mode: "off"
+          - service: switch.turn_off
+            data:
+              entity_id: !input 'heating_led'
       - conditions:
           - condition: time
             after: !input 'time_before'
         sequence:
-          - service: switch.turn_off
+          - service: water_heater.set_operation_mode
             data:
               entity_id: !input 'heating'
+              operation_mode: "off"
+          - service: switch.turn_off
+            data:
+              entity_id: !input 'heating_led'
 
 
     default:
-      - service: switch.turn_off
+      - service: water_heater.set_operation_mode
         data:
           entity_id: !input 'heating'
+          operation_mode: "off"
+      - service: switch.turn_off
+        data:
+          entity_id: !input 'heating_led'
