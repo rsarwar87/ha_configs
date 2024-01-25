@@ -55,7 +55,7 @@ blueprint:
 
 variables:
   set_temp: !input set_temp
-  set_temp: !input set_temp
+  min_temp: !input min_temp
 
 
 trigger:
